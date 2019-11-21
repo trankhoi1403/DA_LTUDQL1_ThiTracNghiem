@@ -1,0 +1,11 @@
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\bin\Debug\ThiTracNghiem.exe.config
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\bin\Debug\ThiTracNghiem.exe
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\bin\Debug\ThiTracNghiem.pdb
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csprojAssemblyReference.cache
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.ThemCauHoi.resources
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.Properties.Resources.resources
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.ThemDapAn.resources
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csproj.GenerateResource.cache
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csproj.CoreCompileInputs.cache
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.exe
+C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.pdb
