@@ -9,3 +9,13 @@ C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_
 C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csproj.CoreCompileInputs.cache
 C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.exe
 C:\Users\binhl\OneDrive\Tài liệu\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.pdb
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\bin\Debug\ThiTracNghiem.exe.config
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.exe
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.pdb
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\bin\Debug\ThiTracNghiem.exe
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\bin\Debug\ThiTracNghiem.pdb
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csprojResolveAssemblyReference.cache
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.ThemCauHoi.resources
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.Properties.Resources.resources
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.ThemDapAn.resources
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csproj.GenerateResource.Cache

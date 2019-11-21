@@ -16,20 +16,21 @@ namespace ThiTracNghiem
         public ThemCauHoi()
         {
             InitializeComponent();
+            cklbCapDo.SelectionMode = SelectionMode.One;
 
             btnThemCauHoi.Click += (s, e) =>
             {
-                SqlConnection con = new SqlConnection(Program.conStr);
-                con.Open();
-                SqlCommand cmd = new SqlCommand("Insert into CauHoi(NoiDung, CapDo) values(@noidung, @capdo)", con);
-                cmd.Parameters.AddWithValue("@noidung", txtCauHoi.Text);
-                cmd.Parameters.AddWithValue("@capdo", cklbCapDo.SelectedIndex);
-                cmd.ExecuteNonQuery();
-
+                using (var qlttn = new QLTTNDataContext())
+                {
+                    qlttn.CauHois.InsertOnSubmit(new CauHoi()
+                    {
+                        NoiDung = txtCauHoi.Text,
+                        CapDo = cklbCapDo.SelectedIndex
+                    });
+                    qlttn.SubmitChanges();
+                }
                 ThemDapAn t = new ThemDapAn(txtCauHoi.Text);
                 t.Show();
-
-                con.Close();
             };
         }
     }

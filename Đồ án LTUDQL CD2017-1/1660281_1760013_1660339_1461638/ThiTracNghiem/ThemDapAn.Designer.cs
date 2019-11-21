@@ -38,26 +38,28 @@
             // 
             this.ckbDung.AutoSize = true;
             this.ckbDung.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.ckbDung.Location = new System.Drawing.Point(132, 175);
+            this.ckbDung.Location = new System.Drawing.Point(38, 88);
+            this.ckbDung.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ckbDung.Name = "ckbDung";
-            this.ckbDung.Size = new System.Drawing.Size(112, 21);
+            this.ckbDung.Size = new System.Drawing.Size(89, 17);
             this.ckbDung.TabIndex = 13;
             this.ckbDung.Text = "Đáp án đúng";
             this.ckbDung.UseVisualStyleBackColor = true;
             // 
             // txtDapAn
             // 
-            this.txtDapAn.Location = new System.Drawing.Point(203, 81);
-            this.txtDapAn.Multiline = true;
+            this.txtDapAn.Location = new System.Drawing.Point(93, 61);
+            this.txtDapAn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtDapAn.Name = "txtDapAn";
-            this.txtDapAn.Size = new System.Drawing.Size(219, 71);
+            this.txtDapAn.Size = new System.Drawing.Size(165, 20);
             this.txtDapAn.TabIndex = 10;
             // 
             // btnThemDapAn
             // 
-            this.btnThemDapAn.Location = new System.Drawing.Point(271, 200);
+            this.btnThemDapAn.Location = new System.Drawing.Point(142, 108);
+            this.btnThemDapAn.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnThemDapAn.Name = "btnThemDapAn";
-            this.btnThemDapAn.Size = new System.Drawing.Size(121, 42);
+            this.btnThemDapAn.Size = new System.Drawing.Size(91, 34);
             this.btnThemDapAn.TabIndex = 12;
             this.btnThemDapAn.Text = "Thêm đáp án";
             this.btnThemDapAn.UseVisualStyleBackColor = true;
@@ -65,21 +67,23 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(129, 81);
+            this.label2.Location = new System.Drawing.Point(38, 61);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 17);
+            this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 11;
             this.label2.Text = "Đáp án:";
             // 
             // ThemDapAn
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(327, 167);
             this.Controls.Add(this.ckbDung);
             this.Controls.Add(this.txtDapAn);
             this.Controls.Add(this.btnThemDapAn);
             this.Controls.Add(this.label2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "ThemDapAn";
             this.Text = "Thêm đáp án";
             this.ResumeLayout(false);

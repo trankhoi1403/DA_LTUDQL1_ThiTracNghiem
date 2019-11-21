@@ -107,3 +107,7 @@ add
 	foreign key (maKhoi, maLop)
 	references LopHoc(maKhoi, maLop)
 go
+
+
+select * from CauHoi
+select * from DapAn

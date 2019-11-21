@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="QLTTN" Class="QLTTNDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=DESKTOP-U3DA8K5\KOICHEN;Initial Catalog=QLTTN;Integrated Security=True" SettingsObjectName="ThiTracNghiem.Properties.Settings" SettingsPropertyName="QLTTNConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.CauHoi" Member="CauHois">
+    <Type Name="CauHoi">
+      <Column Name="maCH" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="NoiDung" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="CapDo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="CauHoi_DapAn" Member="DapAns" ThisKey="maCH" OtherKey="maCH" Type="DapAn" />
+      <Association Name="CauHoi_DeThi" Member="DeThis" ThisKey="maCH" OtherKey="maCH" Type="DeThi" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DapAn" Member="DapAns">
+    <Type Name="DapAn">
+      <Column Name="maCH" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maDA" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="NoiDung" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="DungSai" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="CauHoi_DapAn" Member="CauHoi" ThisKey="maCH" OtherKey="maCH" Type="CauHoi" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DeThi" Member="DeThis">
+    <Type Name="DeThi">
+      <Column Name="maDT" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="maMH" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="maCH" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="DeThi_Thi" Member="This" ThisKey="maDT" OtherKey="maDT" Type="Thi" />
+      <Association Name="CauHoi_DeThi" Member="CauHoi" ThisKey="maCH" OtherKey="maCH" Type="CauHoi" IsForeignKey="true" />
+      <Association Name="MonHoc_DeThi" Member="MonHoc" ThisKey="maMH" OtherKey="maMH" Type="MonHoc" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.HocSinh" Member="HocSinhs">
+    <Type Name="HocSinh">
+      <Column Name="maHS" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="HoTen" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="NgaySinh" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="maKhoi" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="maLop" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="HocSinh_Thi" Member="This" ThisKey="maHS" OtherKey="maHS" Type="Thi" />
+      <Association Name="LopHoc_HocSinh" Member="LopHoc" ThisKey="maKhoi,maLop" OtherKey="maKhoi,maLop" Type="LopHoc" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.KhoiLop" Member="KhoiLops">
+    <Type Name="KhoiLop">
+      <Column Name="maKhoi" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Association Name="KhoiLop_LopHoc" Member="LopHocs" ThisKey="maKhoi" OtherKey="maKhoi" Type="LopHoc" />
+      <Association Name="KhoiLop_MonHoc" Member="MonHocs" ThisKey="maKhoi" OtherKey="maKhoi" Type="MonHoc" />
+    </Type>
+  </Table>
+  <Table Name="dbo.KyThi" Member="KyThis">
+    <Type Name="KyThi">
+      <Column Name="maKT" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NgayThi" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="KyThi_Thi" Member="This" ThisKey="maKT" OtherKey="maKT" Type="Thi" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LopHoc" Member="LopHocs">
+    <Type Name="LopHoc">
+      <Column Name="maKhoi" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maLop" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="LopHoc_HocSinh" Member="HocSinhs" ThisKey="maKhoi,maLop" OtherKey="maKhoi,maLop" Type="HocSinh" />
+      <Association Name="KhoiLop_LopHoc" Member="KhoiLop" ThisKey="maKhoi" OtherKey="maKhoi" Type="KhoiLop" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MonHoc" Member="MonHocs">
+    <Type Name="MonHoc">
+      <Column Name="maMH" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="tenMH" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="maKhoi" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="MonHoc_DeThi" Member="DeThis" ThisKey="maMH" OtherKey="maMH" Type="DeThi" />
+      <Association Name="KhoiLop_MonHoc" Member="KhoiLop" ThisKey="maKhoi" OtherKey="maKhoi" Type="KhoiLop" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Thi" Member="This">
+    <Type Name="Thi">
+      <Column Name="maKT" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maDT" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maHS" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Diem" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Association Name="DeThi_Thi" Member="DeThi" ThisKey="maDT" OtherKey="maDT" Type="DeThi" IsForeignKey="true" />
+      <Association Name="HocSinh_Thi" Member="HocSinh" ThisKey="maHS" OtherKey="maHS" Type="HocSinh" IsForeignKey="true" />
+      <Association Name="KyThi_Thi" Member="KyThi" ThisKey="maKT" OtherKey="maKT" Type="KyThi" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

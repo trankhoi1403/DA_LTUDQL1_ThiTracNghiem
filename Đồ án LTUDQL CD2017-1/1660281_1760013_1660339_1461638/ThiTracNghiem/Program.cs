@@ -8,7 +8,7 @@ namespace ThiTracNghiem
 {
     static class Program
     {
-        public static string conStr = @"Data Source=LAPTOP-OILAJ8PU;Initial Catalog=QLTTN;Integrated Security=True";
+        public static string conStr = @"Data Source=DESKTOP-U3DA8K5\KOICHEN;Initial Catalog=QLTTN;Integrated Security=True";
 
         /// <summary>
         /// The main entry point for the application.
