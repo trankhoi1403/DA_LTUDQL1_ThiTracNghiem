@@ -17,5 +17,4 @@ D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\�
 D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csprojResolveAssemblyReference.cache
 D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.ThemCauHoi.resources
 D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.Properties.Resources.resources
-D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.ThemDapAn.resources
 D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\Đồ án LTUDQL CD2017-1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.csproj.GenerateResource.Cache

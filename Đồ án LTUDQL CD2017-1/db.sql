@@ -108,6 +108,15 @@ add
 	references LopHoc(maKhoi, maLop)
 go
 
-
+use QLTTN
 select * from CauHoi
 select * from DapAn
+
+-- xóa những câu hỏi mà chưa có đáp án
+delete from CauHoi
+where not exists (select * from DapAn
+				where DapAn.maCH = CauHoi.maCH)
+
+delete from DapAn where maCH = 15
+delete from CauHoi where maCH = 15
+
