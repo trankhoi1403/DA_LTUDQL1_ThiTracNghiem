@@ -30,6 +30,9 @@ namespace ThiTracNghiem
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
+    partial void InsertCapDo(CapDo instance);
+    partial void UpdateCapDo(CapDo instance);
+    partial void DeleteCapDo(CapDo instance);
     partial void InsertCauHoi(CauHoi instance);
     partial void UpdateCauHoi(CauHoi instance);
     partial void DeleteCauHoi(CauHoi instance);
@@ -87,6 +90,14 @@ namespace ThiTracNghiem
 				base(connection, mappingSource)
 		{
 			OnCreated();
+		}
+		
+		public System.Data.Linq.Table<CapDo> CapDos
+		{
+			get
+			{
+				return this.GetTable<CapDo>();
+			}
 		}
 		
 		public System.Data.Linq.Table<CauHoi> CauHois
@@ -162,6 +173,120 @@ namespace ThiTracNghiem
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CapDo")]
+	public partial class CapDo : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _maCD;
+		
+		private string _NoiDung;
+		
+		private EntitySet<CauHoi> _CauHois;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnmaCDChanging(int value);
+    partial void OnmaCDChanged();
+    partial void OnNoiDungChanging(string value);
+    partial void OnNoiDungChanged();
+    #endregion
+		
+		public CapDo()
+		{
+			this._CauHois = new EntitySet<CauHoi>(new Action<CauHoi>(this.attach_CauHois), new Action<CauHoi>(this.detach_CauHois));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maCD", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int maCD
+		{
+			get
+			{
+				return this._maCD;
+			}
+			set
+			{
+				if ((this._maCD != value))
+				{
+					this.OnmaCDChanging(value);
+					this.SendPropertyChanging();
+					this._maCD = value;
+					this.SendPropertyChanged("maCD");
+					this.OnmaCDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NoiDung", DbType="NVarChar(255)")]
+		public string NoiDung
+		{
+			get
+			{
+				return this._NoiDung;
+			}
+			set
+			{
+				if ((this._NoiDung != value))
+				{
+					this.OnNoiDungChanging(value);
+					this.SendPropertyChanging();
+					this._NoiDung = value;
+					this.SendPropertyChanged("NoiDung");
+					this.OnNoiDungChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CapDo_CauHoi", Storage="_CauHois", ThisKey="maCD", OtherKey="maCD")]
+		public EntitySet<CauHoi> CauHois
+		{
+			get
+			{
+				return this._CauHois;
+			}
+			set
+			{
+				this._CauHois.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CauHois(CauHoi entity)
+		{
+			this.SendPropertyChanging();
+			entity.CapDo = this;
+		}
+		
+		private void detach_CauHois(CauHoi entity)
+		{
+			this.SendPropertyChanging();
+			entity.CapDo = null;
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CauHoi")]
 	public partial class CauHoi : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -172,11 +297,13 @@ namespace ThiTracNghiem
 		
 		private string _NoiDung;
 		
-		private System.Nullable<int> _CapDo;
+		private System.Nullable<int> _maCD;
 		
 		private EntitySet<DapAn> _DapAns;
 		
 		private EntitySet<DeThi> _DeThis;
+		
+		private EntityRef<CapDo> _CapDo;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -186,14 +313,15 @@ namespace ThiTracNghiem
     partial void OnmaCHChanged();
     partial void OnNoiDungChanging(string value);
     partial void OnNoiDungChanged();
-    partial void OnCapDoChanging(System.Nullable<int> value);
-    partial void OnCapDoChanged();
+    partial void OnmaCDChanging(System.Nullable<int> value);
+    partial void OnmaCDChanged();
     #endregion
 		
 		public CauHoi()
 		{
 			this._DapAns = new EntitySet<DapAn>(new Action<DapAn>(this.attach_DapAns), new Action<DapAn>(this.detach_DapAns));
 			this._DeThis = new EntitySet<DeThi>(new Action<DeThi>(this.attach_DeThis), new Action<DeThi>(this.detach_DeThis));
+			this._CapDo = default(EntityRef<CapDo>);
 			OnCreated();
 		}
 		
@@ -237,22 +365,26 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CapDo", DbType="Int")]
-		public System.Nullable<int> CapDo
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maCD", DbType="Int")]
+		public System.Nullable<int> maCD
 		{
 			get
 			{
-				return this._CapDo;
+				return this._maCD;
 			}
 			set
 			{
-				if ((this._CapDo != value))
+				if ((this._maCD != value))
 				{
-					this.OnCapDoChanging(value);
+					if (this._CapDo.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnmaCDChanging(value);
 					this.SendPropertyChanging();
-					this._CapDo = value;
-					this.SendPropertyChanged("CapDo");
-					this.OnCapDoChanged();
+					this._maCD = value;
+					this.SendPropertyChanged("maCD");
+					this.OnmaCDChanged();
 				}
 			}
 		}
@@ -280,6 +412,40 @@ namespace ThiTracNghiem
 			set
 			{
 				this._DeThis.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CapDo_CauHoi", Storage="_CapDo", ThisKey="maCD", OtherKey="maCD", IsForeignKey=true)]
+		public CapDo CapDo
+		{
+			get
+			{
+				return this._CapDo.Entity;
+			}
+			set
+			{
+				CapDo previousValue = this._CapDo.Entity;
+				if (((previousValue != value) 
+							|| (this._CapDo.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CapDo.Entity = null;
+						previousValue.CauHois.Remove(this);
+					}
+					this._CapDo.Entity = value;
+					if ((value != null))
+					{
+						value.CauHois.Add(this);
+						this._maCD = value.maCD;
+					}
+					else
+					{
+						this._maCD = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("CapDo");
+				}
 			}
 		}
 		

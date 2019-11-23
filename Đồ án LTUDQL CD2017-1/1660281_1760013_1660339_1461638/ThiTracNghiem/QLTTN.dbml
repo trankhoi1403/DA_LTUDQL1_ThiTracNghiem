@@ -1,12 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="QLTTN" Class="QLTTNDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=DESKTOP-U3DA8K5\KOICHEN;Initial Catalog=QLTTN;Integrated Security=True" SettingsObjectName="ThiTracNghiem.Properties.Settings" SettingsPropertyName="QLTTNConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.CapDo" Member="CapDos">
+    <Type Name="CapDo">
+      <Column Name="maCD" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="NoiDung" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Association Name="CapDo_CauHoi" Member="CauHois" ThisKey="maCD" OtherKey="maCD" Type="CauHoi" />
+    </Type>
+  </Table>
   <Table Name="dbo.CauHoi" Member="CauHois">
     <Type Name="CauHoi">
       <Column Name="maCH" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="NoiDung" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-      <Column Name="CapDo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="maCD" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Association Name="CauHoi_DapAn" Member="DapAns" ThisKey="maCH" OtherKey="maCH" Type="DapAn" />
       <Association Name="CauHoi_DeThi" Member="DeThis" ThisKey="maCH" OtherKey="maCH" Type="DeThi" />
+      <Association Name="CapDo_CauHoi" Member="CapDo" ThisKey="maCD" OtherKey="maCD" Type="CapDo" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.DapAn" Member="DapAns">
