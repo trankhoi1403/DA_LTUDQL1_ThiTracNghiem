@@ -18,7 +18,7 @@ namespace ThiTracNghiem
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ThemCauHoi());
+            Application.Run(new QuanLyCauHoi());
         }
     }
 }

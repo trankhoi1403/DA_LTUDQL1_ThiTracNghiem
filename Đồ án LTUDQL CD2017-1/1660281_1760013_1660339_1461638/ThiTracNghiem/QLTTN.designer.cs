@@ -42,9 +42,9 @@ namespace ThiTracNghiem
     partial void InsertDeThi(DeThi instance);
     partial void UpdateDeThi(DeThi instance);
     partial void DeleteDeThi(DeThi instance);
-    partial void InsertHocSinh(HocSinh instance);
-    partial void UpdateHocSinh(HocSinh instance);
-    partial void DeleteHocSinh(HocSinh instance);
+    partial void InsertHocSinh(HocSinhGUI instance);
+    partial void UpdateHocSinh(HocSinhGUI instance);
+    partial void DeleteHocSinh(HocSinhGUI instance);
     partial void InsertKhoiLop(KhoiLop instance);
     partial void UpdateKhoiLop(KhoiLop instance);
     partial void DeleteKhoiLop(KhoiLop instance);
@@ -124,11 +124,11 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		public System.Data.Linq.Table<HocSinh> HocSinhs
+		public System.Data.Linq.Table<HocSinhGUI> HocSinhs
 		{
 			get
 			{
-				return this.GetTable<HocSinh>();
+				return this.GetTable<HocSinhGUI>();
 			}
 		}
 		
@@ -890,7 +890,7 @@ namespace ThiTracNghiem
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.HocSinh")]
-	public partial class HocSinh : INotifyPropertyChanging, INotifyPropertyChanged
+	public partial class HocSinhGUI : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
@@ -925,7 +925,7 @@ namespace ThiTracNghiem
     partial void OnmaLopChanged();
     #endregion
 		
-		public HocSinh()
+		public HocSinhGUI()
 		{
 			this._This = new EntitySet<Thi>(new Action<Thi>(this.attach_This), new Action<Thi>(this.detach_This));
 			this._LopHoc = default(EntityRef<LopHoc>);
@@ -1364,7 +1364,7 @@ namespace ThiTracNghiem
 		
 		private int _maLop;
 		
-		private EntitySet<HocSinh> _HocSinhs;
+		private EntitySet<HocSinhGUI> _HocSinhs;
 		
 		private EntityRef<KhoiLop> _KhoiLop;
 		
@@ -1380,7 +1380,7 @@ namespace ThiTracNghiem
 		
 		public LopHoc()
 		{
-			this._HocSinhs = new EntitySet<HocSinh>(new Action<HocSinh>(this.attach_HocSinhs), new Action<HocSinh>(this.detach_HocSinhs));
+			this._HocSinhs = new EntitySet<HocSinhGUI>(new Action<HocSinhGUI>(this.attach_HocSinhs), new Action<HocSinhGUI>(this.detach_HocSinhs));
 			this._KhoiLop = default(EntityRef<KhoiLop>);
 			OnCreated();
 		}
@@ -1430,7 +1430,7 @@ namespace ThiTracNghiem
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="LopHoc_HocSinh", Storage="_HocSinhs", ThisKey="maKhoi,maLop", OtherKey="maKhoi,maLop")]
-		public EntitySet<HocSinh> HocSinhs
+		public EntitySet<HocSinhGUI> HocSinhs
 		{
 			get
 			{
@@ -1496,13 +1496,13 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		private void attach_HocSinhs(HocSinh entity)
+		private void attach_HocSinhs(HocSinhGUI entity)
 		{
 			this.SendPropertyChanging();
 			entity.LopHoc = this;
 		}
 		
-		private void detach_HocSinhs(HocSinh entity)
+		private void detach_HocSinhs(HocSinhGUI entity)
 		{
 			this.SendPropertyChanging();
 			entity.LopHoc = null;
@@ -1704,7 +1704,7 @@ namespace ThiTracNghiem
 		
 		private EntityRef<DeThi> _DeThi;
 		
-		private EntityRef<HocSinh> _HocSinh;
+		private EntityRef<HocSinhGUI> _HocSinh;
 		
 		private EntityRef<KyThi> _KyThi;
 		
@@ -1725,7 +1725,7 @@ namespace ThiTracNghiem
 		public Thi()
 		{
 			this._DeThi = default(EntityRef<DeThi>);
-			this._HocSinh = default(EntityRef<HocSinh>);
+			this._HocSinh = default(EntityRef<HocSinhGUI>);
 			this._KyThi = default(EntityRef<KyThi>);
 			OnCreated();
 		}
@@ -1857,7 +1857,7 @@ namespace ThiTracNghiem
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="HocSinh_Thi", Storage="_HocSinh", ThisKey="maHS", OtherKey="maHS", IsForeignKey=true)]
-		public HocSinh HocSinh
+		public HocSinhGUI HocSinh
 		{
 			get
 			{
@@ -1865,7 +1865,7 @@ namespace ThiTracNghiem
 			}
 			set
 			{
-				HocSinh previousValue = this._HocSinh.Entity;
+				HocSinhGUI previousValue = this._HocSinh.Entity;
 				if (((previousValue != value) 
 							|| (this._HocSinh.HasLoadedOrAssignedValue == false)))
 				{

@@ -12,11 +12,11 @@ using System.Data.Linq;
 
 namespace ThiTracNghiem
 {
-    public partial class ThemCauHoi : Form
+    public partial class QuanLyCauHoi : Form
     {
         static BindingSource bsCauHoi = new BindingSource();
         static BindingSource bsDapAn = new BindingSource();
-        public ThemCauHoi()
+        public QuanLyCauHoi()
         {
             InitializeComponent();
 

@@ -1,6 +1,6 @@
 ﻿namespace ThiTracNghiem
 {
-    partial class ThemCauHoi
+    partial class QuanLyCauHoi
     {
         /// <summary>
         /// Required designer variable.
