@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data.Linq;
 using System.IO;
+using ClosedXML.Excel;
 
 namespace ThiTracNghiem
 {
@@ -18,12 +19,10 @@ namespace ThiTracNghiem
     {
         static BindingSource bsCauHoi = new BindingSource();
         static BindingSource bsDapAn = new BindingSource();
-        DataSet ds;
-        static bool isset = false;
         void set()
         {
-            isset = true;
-            txtCauHoi.DataBindings.Add("Text", bsCauHoi, "NoiDung", true, DataSourceUpdateMode.Never);
+
+            txtCauHoi.DataBindings.Add("Text", bsCauHoi, "NoiDung", true, DataSourceUpdateMode.Never, "Null value");
             txtCauHoi.Validating += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(txtCauHoi.Text))
@@ -38,7 +37,7 @@ namespace ThiTracNghiem
                     errorProvider.SetError(txtCauHoi, "");
                 }
             };
-            txtDapAn.DataBindings.Add("Text", bsDapAn, "NoiDung", true, DataSourceUpdateMode.Never);
+            txtDapAn.DataBindings.Add("Text", bsDapAn, "NoiDung", true, DataSourceUpdateMode.Never, "Null value");
             txtDapAn.Validating += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(txtDapAn.Text))
@@ -53,7 +52,18 @@ namespace ThiTracNghiem
                     errorProvider.SetError(txtDapAn, "");
                 }
             };
-            cbCapDo.DataBindings.Add("Text", bsCauHoi, "maCD", true, DataSourceUpdateMode.Never);
+            txtDungSai.Validating += (s, e) =>
+             {
+                 if (txtDungSai.Text.Contains('T'))
+                 {
+                     txtDungSai.Text = "True";
+                 }
+                 else
+                 {
+                     txtDungSai.Text = "False";
+                 }
+             };
+            cbCapDo.DataBindings.Add("Text", bsCauHoi, "maCD", true, DataSourceUpdateMode.Never, "Null value");
             cbCapDo.DataBindings[0].Format += (s, e) =>
             {
                 if (e.DesiredType == typeof(string))
@@ -70,14 +80,63 @@ namespace ThiTracNghiem
                     e.Value = (cbCapDo.DataSource as List<CapDo>).Where(cd => cd.NoiDung == noiDungCapDo).FirstOrDefault().maCD;
                 }
             };
-            ckbDungSai.DataBindings.Add("Checked", bsDapAn, "DungSai", true, DataSourceUpdateMode.Never);
+            ckbDungSai.DataBindings.Add("Checked", bsDapAn, "DungSai", true, DataSourceUpdateMode.Never, false);
             cbDSCH.SelectedIndexChanged += (s, e) =>
             {
                 using (var qlttn = new QLTTNDataContext())
                 {
-                    bsDapAn.DataSource = qlttn.CauHois.Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString())).SingleOrDefault().DapAns.ToList();
+                    if (cbDSCH.SelectedItem != null)
+                    {
+                        bsDapAn.DataSource = qlttn.CauHois.Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString())).SingleOrDefault().DapAns.ToList();
+                    }
                 }
             };
+        }
+        void loadCBCauHoi()
+        {
+            using (var qlttn = new QLTTNDataContext())
+            {
+                if (qlttn.CapDos.Count() > 0 && qlttn.CauHois.Count() > 0)
+                {
+                    bsCauHoi.DataSource = (qlttn.CauHois.ToList());
+                    cbDSCH.DataSource = bsCauHoi;
+                    cbDSCH.DisplayMember = "NoiDung";
+                    cbDSCH.ValueMember = "maCH";
+
+                    cbCapDo.DataSource = qlttn.CapDos.ToList();
+                    cbCapDo.DisplayMember = "NoiDung";
+                    cbCapDo.ValueMember = "maCD";
+                    cbCapDo.SelectedValue = qlttn.CapDos.FirstOrDefault().maCD;
+                }
+                else
+                {
+                    //bsCauHoi.DataSource = DBNull.Value;
+                }
+            }
+        }
+        void loadDGVDapAn()
+        {
+            using (var qlttn = new QLTTNDataContext())
+            {
+                if (qlttn.CauHois.Count() > 0)
+                {
+                    bsDapAn.DataSource = qlttn.CauHois.Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString())).SingleOrDefault().DapAns.ToList();
+                    dgvDSDA.DataSource = bsDapAn;
+                    dgvDSDA.Columns["maCH"].Visible = false;
+                    dgvDSDA.Columns["CauHoi"].Visible = false;
+                    dgvDSDA.Columns["maDA"].Visible = false;
+                    dgvDSDA.Columns["NoiDung"].DisplayIndex = 1;
+                    dgvDSDA.Columns["NoiDung"].Width = 450;
+                    dgvDSDA.Columns["NoiDung"].HeaderText = "Nội dung đáp án";
+                    dgvDSDA.Columns["DungSai"].DisplayIndex = 2;
+                    dgvDSDA.Columns["DungSai"].Width = 115;
+                    dgvDSDA.Columns["DungSai"].HeaderText = "Tính chất đáp án";
+                }
+                else
+                {
+                    //bsDapAn.DataSource = DBNull.Value;
+                }
+            }
         }
         public QuanLyCauHoi()
         {
@@ -86,16 +145,13 @@ namespace ThiTracNghiem
             loadCBCauHoi();
             loadDGVDapAn();
 
-            if (bsCauHoi.DataSource != null && bsDapAn.DataSource != null)
-            {
-                set();
-            }
+            set();
 
             btnThemCauHoi.Click += (s, e) =>
             {
                 using (var qlttn = new QLTTNDataContext())
                 {
-                    if (qlttn.CauHois.Where(ch => ch.NoiDung == txtCauHoi.Text).Count() != 0)
+                    if (qlttn.CauHois.Where(ch => ch.NoiDung.ToLower() == txtCauHoi.Text.ToLower()).Count() != 0)
                     {
                         MessageBox.Show("Câu hỏi này đã có trong danh sách. Xin mời tạo câu hỏi mới", "Trùng record", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
@@ -124,6 +180,11 @@ namespace ThiTracNghiem
              {
                  using (var qlttn = new QLTTNDataContext())
                  {
+                     if (qlttn.CauHois.Count() <= 1)
+                     {
+                         MessageBox.Show("Không thể xóa vì cần phải có ít nhất một câu hỏi trong Database", "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                         return;
+                     }
                      var cauHoiHienTai = qlttn.CauHois
                                          .Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString()))
                                          .FirstOrDefault();
@@ -137,6 +198,12 @@ namespace ThiTracNghiem
             {
                 using (var qlttn = new QLTTNDataContext())
                 {
+                    if (qlttn.CauHois.Where(ch => ch.NoiDung.ToLower() == txtCauHoi.Text.ToLower()).Count() != 0)
+                    {
+                        MessageBox.Show("Câu hỏi này đã có trong danh sách. Xin mời tạo câu hỏi mới", "Trùng record", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     var cauHoiHienTai = qlttn.CauHois
                                         .Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString()))
                                         .FirstOrDefault();
@@ -155,9 +222,9 @@ namespace ThiTracNghiem
                     var cauHoiHienTai = qlttn.CauHois
                                         .Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString()))
                                         .FirstOrDefault();
-                    if (cauHoiHienTai.DapAns.Where(da => da.NoiDung == txtDapAn.Text).Count() != 0)
+                    if (cauHoiHienTai.DapAns.Where(da => da.NoiDung.ToLower() == txtDapAn.Text.ToLower()).Count() != 0)
                     {
-                        MessageBox.Show("Câu hỏi này đã có trong danh sách. Xin mời tạo câu hỏi mới", "Lỗi trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                        MessageBox.Show("Đáp án này đã có trong danh sách. Xin mời tạo đáp án mới", "Lỗi trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                         return;
                     }
                     if (cauHoiHienTai.DapAns.Count >= 6)
@@ -166,12 +233,11 @@ namespace ThiTracNghiem
                         return;
                     }
 
-                    string noidung = txtDapAn.Text;
-
                     qlttn.DapAns.InsertOnSubmit(new DapAn()
                     {
-                        NoiDung = noidung,
+                        NoiDung = txtDapAn.Text,
                         DungSai = ckbDungSai.Checked,
+                        //DungSai = bool.Parse(txtDungSai.Text),
                         CauHoi = qlttn.CauHois.Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString())).SingleOrDefault()
                     });
                     qlttn.SubmitChanges();
@@ -210,9 +276,17 @@ namespace ThiTracNghiem
                     var cauHoiHienTai = qlttn.CauHois
                                         .Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString()))
                                         .FirstOrDefault();
+                    if (cauHoiHienTai.DapAns.Where(da => da.NoiDung.ToLower() == txtDapAn.Text.ToLower()).Count() != 0)
+                    {
+                        MessageBox.Show("Đáp án này đã có trong danh sách. Xin mời tạo đáp án mới", "Lỗi trùng dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                        return;
+                    }
+
                     var dapAnHienTai = cauHoiHienTai.DapAns.Where(da => da.maDA == int.Parse(dgvDSDA.SelectedRows[0].Cells["maDA"].Value.ToString())).FirstOrDefault();
                     dapAnHienTai.NoiDung = txtDapAn.Text;
                     dapAnHienTai.DungSai = ckbDungSai.Checked;
+                    //dapAnHienTai.DungSai = bool.Parse(txtDungSai.Text);
+
                     qlttn.SubmitChanges();
                 }
                 loadDGVDapAn();
@@ -225,9 +299,12 @@ namespace ThiTracNghiem
                 {
                     if (ofd.ShowDialog() == DialogResult.OK)
                     {
-                        using (var stream = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read))
+                        using (var stream = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
                             IExcelDataReader reader;
+                            DataSet ds;
+                            List<CauHoi> cauHoiBiTrung = new List<CauHoi>();
+
                             if (ofd.FilterIndex == 2)
                             {
                                 reader = ExcelReaderFactory.CreateBinaryReader(stream);
@@ -244,100 +321,131 @@ namespace ThiTracNghiem
                                     UseHeaderRow = true
                                 }
                             });
+                            reader.Close();
 
                             //cb_sheet.Items.Clear();
                             using (var qlttn = new QLTTNDataContext())
                             {
-                                qlttn.DapAns.DeleteAllOnSubmit(qlttn.DapAns.Select(da => da));
-                                qlttn.CauHois.DeleteAllOnSubmit(qlttn.CauHois.Select(ch => ch));
-                                qlttn.CapDos.DeleteAllOnSubmit(qlttn.CapDos.Select(cd => cd));
-                                qlttn.SubmitChanges();
-
-                                DataTable dtCapDo = ds.Tables["CapDo"];
-                                foreach (DataRow row in dtCapDo.Rows)
-                                {
-                                    qlttn.CapDos.InsertOnSubmit(new CapDo()
-                                    {
-                                        maCD = int.Parse(row["maCD"].ToString()),
-                                        NoiDung = row["NoiDung"].ToString()
-                                    });
-                                }
-                                qlttn.SubmitChanges();
                                 DataTable dtCauHoi = ds.Tables["CauHoi"];
+                                DataTable dtDapAn = ds.Tables["DapAn"];
+                                DataRow firstRow = dtCauHoi.Rows[0];
+
+                                int lastIdent = (int)qlttn.ExecuteQuery<decimal>("select IDENT_CURRENT('dbo.CauHoi')").FirstOrDefault();
+
                                 foreach (DataRow row in dtCauHoi.Rows)
                                 {
-                                    qlttn.CauHois.InsertOnSubmit(new CauHoi()
-                                    {
-                                        maCH = int.Parse(row["maCH"].ToString()),
-                                        NoiDung = row["NoiDung"].ToString(),
-                                        maCD = int.Parse(row["maCD"].ToString())
-                                    });
-                                }
-                                qlttn.SubmitChanges();
-                                DataTable dtDapAn = ds.Tables["DapAn"];
-                                foreach (DataRow row in dtDapAn.Rows)
-                                {
-                                    qlttn.DapAns.InsertOnSubmit(new DapAn()
+                                    CauHoi cauHoiTmp = new CauHoi()
                                     {
                                         NoiDung = row["NoiDung"].ToString(),
-                                        maCH = int.Parse(row["maCH"].ToString()),
-                                        maDA = int.Parse(row["maDA"].ToString()),
-                                        DungSai = bool.Parse(row["DungSai"].ToString())
-                                    });
+                                        maCD = int.Parse(row["maCD"].ToString()),
+                                    };
+                                    if (qlttn.CauHois.Where(ch => ch.NoiDung.ToLower() == cauHoiTmp.NoiDung.ToLower()).Count() == 0)
+                                    {
+                                        qlttn.CauHois.InsertOnSubmit(cauHoiTmp);
+                                        qlttn.SubmitChanges();
+                                        foreach (DataRow rowDapAn in dtDapAn.Rows)
+                                        {
+                                            if (rowDapAn["maCH"].ToString() == row["maCH"].ToString())
+                                            {
+                                                DapAn datmp = new DapAn()
+                                                {
+                                                    NoiDung = rowDapAn["NoiDung"].ToString(),
+                                                    maCH = qlttn.CauHois.Max(ch => ch.maCH),
+                                                    DungSai = rowDapAn["DungSai"].ToString().ToLower() == "true" ? true : false
+                                                };
+                                                qlttn.DapAns.InsertOnSubmit(datmp);
+                                            }
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        cauHoiBiTrung.Add(cauHoiTmp);
+                                    }
+
                                 }
                                 qlttn.SubmitChanges();
                             }
                             loadCBCauHoi();
                             loadDGVDapAn();
-                            if (!isset)
+                            if (cauHoiBiTrung.Count > 0)
                             {
-                                set();
+                                string strCauHois = "";
+                                for (int i = 0; i < cauHoiBiTrung.Count; i++)
+                                {
+                                    string str = cauHoiBiTrung[i].NoiDung;
+                                    int maxLeng = 50;
+                                    if (str.Length > maxLeng)
+                                    {
+                                        str = str.Replace(str.Substring(maxLeng, str.Length - maxLeng), " ...");
+                                    }
+                                    strCauHois += $"{Environment.NewLine} {i + 1}. {str}";
+                                }
+                                MessageBox.Show($">>>> DANH SÁCH NHỮNG CÂU HỎI BỊ TRÙNG <<<< {strCauHois}", "Không thể import", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             }
-                            reader.Close();
-
+                            else
+                            {
+                                MessageBox.Show("Import danh sách câu hỏi thành công", "Thông báo");
+                            }
                         }
                     }
                 }
 
             };
-        }
-        void loadCBCauHoi()
-        {
-            using (var qlttn = new QLTTNDataContext())
-            {
-                if (qlttn.CapDos.Count() > 0 && qlttn.CauHois.Count() > 0)
-                {
-                    bsCauHoi.DataSource = (qlttn.CauHois.ToList());
-                    cbDSCH.DataSource = bsCauHoi;
-                    cbDSCH.DisplayMember = "NoiDung";
-                    cbDSCH.ValueMember = "maCH";
+            btnExport.Click += (s, e) =>
+             {
+                 using (var sfd = new SaveFileDialog()
+                 {
+                     CreatePrompt = false,
+                     OverwritePrompt = true,
+                     AddExtension = true,
+                     Filter = "Excel Workbook|*.xlsx|Excel Workbook 97-2003|*.xls",
+                     ValidateNames = true
+                 })
+                 {
+                     if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                     {
 
-                    cbCapDo.DataSource = qlttn.CapDos.ToList();
-                    cbCapDo.DisplayMember = "NoiDung";
-                    cbCapDo.ValueMember = "maCD";
-                    cbCapDo.SelectedValue = qlttn.CapDos.FirstOrDefault().maCD;
-                }
-            }
-        }
-        void loadDGVDapAn()
-        {
-            using (var qlttn = new QLTTNDataContext())
-            {
-                if (qlttn.CauHois.Count() > 0)
-                {
-                    bsDapAn.DataSource = qlttn.CauHois.Where(ch => ch.maCH == int.Parse(cbDSCH.SelectedValue.ToString())).SingleOrDefault().DapAns.ToList();
-                    dgvDSDA.DataSource = bsDapAn;
-                    dgvDSDA.Columns["maCH"].Visible = false;
-                    dgvDSDA.Columns["CauHoi"].Visible = false;
-                    dgvDSDA.Columns["maDA"].Visible = false;
-                    dgvDSDA.Columns["NoiDung"].DisplayIndex = 1;
-                    dgvDSDA.Columns["NoiDung"].Width = 450;
-                    dgvDSDA.Columns["NoiDung"].HeaderText = "Nội dung đáp án";
-                    dgvDSDA.Columns["DungSai"].DisplayIndex = 2;
-                    dgvDSDA.Columns["DungSai"].Width = 115;
-                    dgvDSDA.Columns["DungSai"].HeaderText = "Tính chất đáp án";
-                }
-            }
+                         DataTable dtCauHoi = new DataTable();
+                         dtCauHoi.TableName = "CauHoi";
+                         dtCauHoi.Columns.Add("maCH", typeof(int));
+                         dtCauHoi.Columns.Add("NoiDung", typeof(string));
+                         dtCauHoi.Columns.Add("maCD", typeof(int));
+
+                         DataTable dtDapAn = new DataTable();
+                         dtDapAn.TableName = "DapAn";
+                         dtDapAn.Columns.Add("maCH", typeof(int));
+                         dtDapAn.Columns.Add("maDA", typeof(int));
+                         dtDapAn.Columns.Add("NoiDung", typeof(string));
+                         dtDapAn.Columns.Add("DungSai", typeof(bool));
+
+                         using (var qlttn = new QLTTNDataContext())
+                         {
+                             List<CauHoi> chs = qlttn.CauHois.ToList();
+                             List<DapAn> das = qlttn.DapAns.ToList();
+                             for (int i = 0; i < qlttn.CauHois.Count(); i++)
+                             {
+                                 List<DapAn> dasTmp = das.Where(da => da.maCH == chs[i].maCH).ToList();
+                                 chs[i].maCH = i + 1;
+                                 dtCauHoi.Rows.Add(chs[i].maCH, chs[i].NoiDung, chs[i].maCD);
+
+                                 foreach (var da in dasTmp)
+                                 {
+                                     da.maCH = i + 1;
+                                     dtDapAn.Rows.Add(da.maCH, da.maDA, da.NoiDung, da.DungSai);
+                                 }
+                             }
+                         };
+
+                         XLWorkbook wb = new XLWorkbook();
+                         wb.Worksheets.Add(dtCauHoi, dtCauHoi.TableName);
+                         wb.Worksheets.Add(dtDapAn, dtDapAn.TableName);
+
+
+                         wb.SaveAs(sfd.InitialDirectory + sfd.FileName);
+                     }
+                 }
+             };
         }
     }
 }

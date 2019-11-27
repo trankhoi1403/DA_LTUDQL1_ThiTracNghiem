@@ -41,12 +41,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ckbDungSai = new System.Windows.Forms.CheckBox();
+            this.txtDungSai = new System.Windows.Forms.TextBox();
             this.txtDapAn = new System.Windows.Forms.TextBox();
             this.btnSuaDapAn = new System.Windows.Forms.Button();
             this.btnXoaDapAn = new System.Windows.Forms.Button();
             this.btnThemDapAn = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.btnImport = new System.Windows.Forms.Button();
+            this.btnExport = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDSDA)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -134,11 +136,11 @@
             this.dgvDSDA.AllowUserToAddRows = false;
             this.dgvDSDA.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDSDA.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.dgvDSDA.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvDSDA.Location = new System.Drawing.Point(0, 227);
             this.dgvDSDA.Margin = new System.Windows.Forms.Padding(2);
             this.dgvDSDA.MultiSelect = false;
             this.dgvDSDA.Name = "dgvDSDA";
+            this.dgvDSDA.ReadOnly = true;
             this.dgvDSDA.RowHeadersWidth = 51;
             this.dgvDSDA.RowTemplate.Height = 24;
             this.dgvDSDA.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -152,7 +154,7 @@
             this.cbDSCH.Location = new System.Drawing.Point(126, 193);
             this.cbDSCH.Margin = new System.Windows.Forms.Padding(2);
             this.cbDSCH.Name = "cbDSCH";
-            this.cbDSCH.Size = new System.Drawing.Size(383, 21);
+            this.cbDSCH.Size = new System.Drawing.Size(209, 21);
             this.cbDSCH.TabIndex = 11;
             // 
             // label3
@@ -168,6 +170,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.ckbDungSai);
+            this.groupBox2.Controls.Add(this.txtDungSai);
             this.groupBox2.Controls.Add(this.txtDapAn);
             this.groupBox2.Controls.Add(this.btnSuaDapAn);
             this.groupBox2.Controls.Add(this.btnXoaDapAn);
@@ -184,12 +187,19 @@
             // ckbDungSai
             // 
             this.ckbDungSai.AutoSize = true;
-            this.ckbDungSai.Location = new System.Drawing.Point(21, 115);
+            this.ckbDungSai.Location = new System.Drawing.Point(19, 113);
             this.ckbDungSai.Name = "ckbDungSai";
             this.ckbDungSai.Size = new System.Drawing.Size(103, 17);
-            this.ckbDungSai.TabIndex = 9;
+            this.ckbDungSai.TabIndex = 10;
             this.ckbDungSai.Text = "Là đáp án đúng";
             this.ckbDungSai.UseVisualStyleBackColor = true;
+            // 
+            // txtDungSai
+            // 
+            this.txtDungSai.Location = new System.Drawing.Point(157, 111);
+            this.txtDungSai.Name = "txtDungSai";
+            this.txtDungSai.Size = new System.Drawing.Size(100, 20);
+            this.txtDungSai.TabIndex = 9;
             // 
             // txtDapAn
             // 
@@ -237,18 +247,28 @@
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(527, 193);
+            this.btnImport.Location = new System.Drawing.Point(376, 193);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(75, 23);
+            this.btnImport.Size = new System.Drawing.Size(88, 23);
             this.btnImport.TabIndex = 12;
-            this.btnImport.Text = "Import";
+            this.btnImport.Text = "Nhập từ excel";
             this.btnImport.UseVisualStyleBackColor = true;
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(477, 193);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(88, 23);
+            this.btnExport.TabIndex = 13;
+            this.btnExport.Text = "Xuất ra excel";
+            this.btnExport.UseVisualStyleBackColor = true;
             // 
             // QuanLyCauHoi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(622, 411);
+            this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.cbDSCH);
             this.Controls.Add(this.dgvDSDA);
@@ -283,7 +303,6 @@
         private System.Windows.Forms.TextBox txtDapAn;
         private System.Windows.Forms.Button btnThemDapAn;
         private System.Windows.Forms.ComboBox cbCapDo;
-        private System.Windows.Forms.CheckBox ckbDungSai;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.Button btnXoaCauHoi;
@@ -291,6 +310,9 @@
         private System.Windows.Forms.Button btnSuaCauHoi;
         private System.Windows.Forms.Button btnSuaDapAn;
         private System.Windows.Forms.Button btnImport;
+        private System.Windows.Forms.TextBox txtDungSai;
+        private System.Windows.Forms.CheckBox ckbDungSai;
+        private System.Windows.Forms.Button btnExport;
     }
 }
 
