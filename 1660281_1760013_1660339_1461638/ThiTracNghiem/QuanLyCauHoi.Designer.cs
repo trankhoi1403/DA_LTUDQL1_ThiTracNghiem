@@ -41,7 +41,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ckbDungSai = new System.Windows.Forms.CheckBox();
-            this.txtDungSai = new System.Windows.Forms.TextBox();
             this.txtDapAn = new System.Windows.Forms.TextBox();
             this.btnSuaDapAn = new System.Windows.Forms.Button();
             this.btnXoaDapAn = new System.Windows.Forms.Button();
@@ -169,7 +168,6 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.ckbDungSai);
-            this.groupBox2.Controls.Add(this.txtDungSai);
             this.groupBox2.Controls.Add(this.txtDapAn);
             this.groupBox2.Controls.Add(this.btnSuaDapAn);
             this.groupBox2.Controls.Add(this.btnXoaDapAn);
@@ -194,6 +192,7 @@
             this.ckbDungSai.Text = "Là đáp án đúng";
             this.ckbDungSai.UseVisualStyleBackColor = true;
             // 
+<<<<<<< HEAD
             // txtDungSai
             // 
             this.txtDungSai.Location = new System.Drawing.Point(209, 137);
@@ -202,6 +201,8 @@
             this.txtDungSai.Size = new System.Drawing.Size(132, 22);
             this.txtDungSai.TabIndex = 9;
             // 
+=======
+>>>>>>> 546622a9ce5d23775475dbe82bf6190dcc1de0a5
             // txtDapAn
             // 
             this.txtDapAn.Location = new System.Drawing.Point(23, 27);
@@ -313,7 +314,6 @@
         private System.Windows.Forms.Button btnSuaCauHoi;
         private System.Windows.Forms.Button btnSuaDapAn;
         private System.Windows.Forms.Button btnImport;
-        private System.Windows.Forms.TextBox txtDungSai;
         private System.Windows.Forms.CheckBox ckbDungSai;
         private System.Windows.Forms.Button btnExport;
     }
