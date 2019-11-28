@@ -92,6 +92,7 @@ namespace ThiTracNghiem
                 }
             };
         }
+  
         void loadCBCauHoi()
         {
             using (var qlttn = new QLTTNDataContext())
@@ -447,6 +448,7 @@ namespace ThiTracNghiem
                  }
              };
         }
+        
     }
 }
 

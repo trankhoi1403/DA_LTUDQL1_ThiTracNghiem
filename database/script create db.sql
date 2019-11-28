@@ -8,6 +8,7 @@ create database QLTTN
 go
 use QLTTN
 
+/* ============================= TẠO BẢNG VÀ KHÓA CHÍNH =============================*/
 create table KyThi(
 	maKT varchar(10) primary key,
 	NgayThi datetime
@@ -30,7 +31,9 @@ create table DeThi(
 create table CauHoi(
 	maCH int primary key identity not null,
 	NoiDung nvarchar(1000),
-	maCD int
+	maCD int,
+	maMH varchar(10),	-- chưa tạo khóa ngoại
+	maKhoi int		-- chưa tạo khóa ngoại
 )
 
 create table CapDo(
@@ -62,14 +65,59 @@ create table LopHoc(
 	primary key (maKhoi, maLop)
 )
 
+create table NguoiDung(
+	maND int primary key identity not null,
+	TenND varchar(1000),
+	MatKhau varchar(1000),
+	LoaiND varchar(10)
+)
+
 create table HocSinh(
-	maHS int primary key identity not null,
+	maHS int primary key,
+	maND int,
 	HoTen nvarchar(1000),
 	NgaySinh datetime,
 	maKhoi int,
 	maLop int
 )
+
+create table GiaoVien(
+	maGV int primary key,
+	maND int,
+	HoTen nvarchar(1000),
+	NgaySinh datetime,
+	maMH varchar(10)
+)
+
+create table CT_GiangDay(
+	maGV int,
+	maKhoi int,
+	maLop int,
+	primary key (maGV, maKhoi, maLop)
+)
 go
+
+/*====================== Cập nhật khóa ngoại =====================*/
+alter table HocSinh
+add 
+	constraint fk_hs_nd
+	foreign key (maHS)
+	references NguoiDung(maND)
+
+alter table GiaoVien
+add 
+	constraint fk_gv_nd
+	foreign key (maGV)
+	references NguoiDung(maND)
+
+alter table CT_GiangDay
+add
+	constraint fk_ctgd_gv
+	foreign key (maGV)
+	references GiaoVien(maGV),
+	constraint fk_ctgd_lh
+	foreign key (maKhoi, maLop)
+	references LopHoc(maKhoi, maLop)
 
 alter table Thi
 add
@@ -115,6 +163,18 @@ add
 	constraint fk_hs_lh
 	foreign key (maKhoi, maLop)
 	references LopHoc(maKhoi, maLop)
+go
+
+insert into NguoiDung(TenND, MatKhau, LoaiND) values ('nguyenthily', '123', 'hs')
+insert into NguoiDung(TenND, MatKhau, LoaiND) values ('phanxieuthien', '123', 'hs')
+insert into NguoiDung(TenND, MatKhau, LoaiND) values ('trankhoi', '123', 'hs')
+insert into NguoiDung(TenND, MatKhau, LoaiND) values ('lethanhbbinh', '123', 'gv')
+go
+
+insert into HocSinh(maHS, HoTen) values(1, N'Nguyễn Thị Lý')
+insert into HocSinh(maHS, HoTen) values(2, N'Phan Xiêu Thiên')
+insert into HocSinh(maHS, HoTen) values(3, N'Trần Khôi')
+insert into GiaoVien(maGV, HoTen) values(4, N'Lê Thanh Bình')
 go
 
 insert into CapDo values
@@ -185,7 +245,11 @@ use QLTTN
 select * from CauHoi
 select * from DapAn
 select * from CapDo
+select * from NguoiDung
+select * from HocSinh
+select * from GiaoVien
 select IDENT_CURRENT('dbo.CauHoi')
+
 /*
 -- xóa những câu hỏi mà chưa có đáp án
 delete from CauHoi
@@ -198,7 +262,6 @@ delete from CauHoi where maCH > 50
 delete from DapAn
 delete from CauHoi
 delete from CapDo
-
 
 1,  
 2,  
