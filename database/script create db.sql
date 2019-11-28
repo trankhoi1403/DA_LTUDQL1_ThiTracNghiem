@@ -24,7 +24,12 @@ create table Thi(
 create table DeThi(
 	maDT int primary key identity not null,
 	maMH varchar(10),
+)
+
+create table CT_DeThi(
+	maDT int,
 	maCH int
+	primary key (maDT, maCH)
 )
 
 create table CauHoi(

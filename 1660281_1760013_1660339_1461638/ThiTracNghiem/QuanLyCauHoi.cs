@@ -52,17 +52,6 @@ namespace ThiTracNghiem
                     errorProvider.SetError(txtDapAn, "");
                 }
             };
-            txtDungSai.Validating += (s, e) =>
-             {
-                 if (txtDungSai.Text.Contains('T'))
-                 {
-                     txtDungSai.Text = "True";
-                 }
-                 else
-                 {
-                     txtDungSai.Text = "False";
-                 }
-             };
             cbCapDo.DataBindings.Add("Text", bsCauHoi, "maCD", true, DataSourceUpdateMode.Never, "Null value");
             cbCapDo.DataBindings[0].Format += (s, e) =>
             {
@@ -449,4 +438,3 @@ namespace ThiTracNghiem
         }
     }
 }
-
