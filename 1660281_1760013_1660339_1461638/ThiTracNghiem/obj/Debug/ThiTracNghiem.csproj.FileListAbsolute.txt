@@ -1,0 +1,3 @@
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\1660281_1760013_1660339_1461638\ThiTracNghiem\bin\Debug\ThiTracNghiem.exe.config
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.exe
+D:\Lập trình\Năm 4 - HK1\Lập trình ứng dụng quản lý 1\DA-LTUDQL1\1660281_1760013_1660339_1461638\ThiTracNghiem\obj\Debug\ThiTracNghiem.pdb

@@ -7,6 +7,7 @@ end
 create database QLTTN
 go
 use QLTTN
+go
 
 /* ============================= TẠO BẢNG VÀ KHÓA CHÍNH =============================*/
 create table KyThi(
@@ -16,7 +17,7 @@ create table KyThi(
 
 create table Thi(
 	maKT varchar(10), 
-	maDT int, 
+	maDT int,
 	maHS int,
 	Diem decimal,
 	primary key (maKT, maDT, maHS)
@@ -25,6 +26,7 @@ create table Thi(
 create table DeThi(
 	maDT int primary key identity not null,
 	maMH varchar(10),
+	maKhoi varchar(3)
 )
 
 create table CT_DeThi(
@@ -37,8 +39,8 @@ create table CauHoi(
 	maCH int primary key identity not null,
 	NoiDung nvarchar(1000),
 	maCD int,
-	maMH varchar(10),	-- chưa tạo khóa ngoại
-	maKhoi int		-- chưa tạo khóa ngoại
+	maMH varchar(10),
+	maKhoi varchar(3)		
 )
 
 create table CapDo(
@@ -55,18 +57,19 @@ create table DapAn(
 )
 
 create table MonHoc(
-	maMH varchar(10) primary key,
+	maMH varchar(10),
 	tenMH nvarchar(1000),
-	maKhoi int
+	maKhoi varchar(3),
+	primary key (maKhoi, maMH)
 )
 
 create table KhoiLop(
-	maKhoi int primary key identity not null
+	maKhoi varchar(3) primary key
 )
 
 create table LopHoc(
-	maKhoi int,
-	maLop int identity not null
+	maKhoi varchar(3),
+	maLop varchar(3),
 	primary key (maKhoi, maLop)
 )
 
@@ -82,8 +85,8 @@ create table HocSinh(
 	maND int,
 	HoTen nvarchar(1000),
 	NgaySinh datetime,
-	maKhoi int,
-	maLop int
+	maKhoi varchar(3),
+	maLop varchar(3)
 )
 
 create table GiaoVien(
@@ -96,13 +99,14 @@ create table GiaoVien(
 
 create table CT_GiangDay(
 	maGV int,
-	maKhoi int,
-	maLop int,
+	maKhoi varchar(3),
+	maLop varchar(3),
 	primary key (maGV, maKhoi, maLop)
 )
 go
 
-/*====================== Cập nhật khóa ngoại =====================*/
+
+/* ============================== CẬP NHẬT KHÓA NGOẠI =============================*/
 alter table HocSinh
 add 
 	constraint fk_hs_nd
@@ -147,7 +151,13 @@ alter table CauHoi
 add 
 	constraint fk_ch_cd
 	foreign key (maCD)
-	references CapDo(maCD)
+	references CapDo(maCD),
+	constraint fk_ch_mh
+	foreign key (maMH)
+	references MonHoc(maMH),
+	constraint fk_ch_kl
+	foreign key (maKhoi)
+	references KhoiLop(maKhoi)
 alter table DapAn
 add 
 	constraint fk_da_ch
@@ -168,6 +178,35 @@ add
 	constraint fk_hs_lh
 	foreign key (maKhoi, maLop)
 	references LopHoc(maKhoi, maLop)
+go
+
+
+/* ================================ TẠO DỮ LIỆU MẪU =============================*/
+-- thêm khối lớp 10,11,12, mỗi khối có 9 lớp A1 -> C3, mỗi khối có 4 môn Toán, vật lý, hóa học, sinh học
+declare @i int, @c int
+set @i = 10 
+set @c = 65
+while @i <= 12
+begin
+	declare @maK varchar(3)
+	set @maK = 'K' + CAST(@i as char)
+
+	insert into KhoiLop(maKhoi) values (@maK)
+	while @c <= 67
+	begin
+		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + CAST(1 as char))
+		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + CAST(2 as char))
+		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + CAST(3 as char))
+		set @c += 1
+	end
+
+	insert into MonHoc(maMH, maKhoi, tenMH) values ('T',  @maK, N'Toán')
+	insert into MonHoc(maMH, maKhoi, tenMH) values ('VL', @maK, N'Vật lý')
+	insert into MonHoc(maMH, maKhoi, tenMH) values ('HH', @maK, N'Hóa học')
+	insert into MonHoc(maMH, maKhoi, tenMH) values ('SH', @maK, N'Sinh học')
+	set @i += 1
+	set @c = 65
+end
 go
 
 insert into NguoiDung(TenND, MatKhau, LoaiND) values ('nguyenthily', '123', 'hs')
