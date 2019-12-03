@@ -192,17 +192,6 @@
             this.ckbDungSai.Text = "Là đáp án đúng";
             this.ckbDungSai.UseVisualStyleBackColor = true;
             // 
-<<<<<<< HEAD
-            // txtDungSai
-            // 
-            this.txtDungSai.Location = new System.Drawing.Point(209, 137);
-            this.txtDungSai.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.txtDungSai.Name = "txtDungSai";
-            this.txtDungSai.Size = new System.Drawing.Size(132, 22);
-            this.txtDungSai.TabIndex = 9;
-            // 
-=======
->>>>>>> 546622a9ce5d23775475dbe82bf6190dcc1de0a5
             // txtDapAn
             // 
             this.txtDapAn.Location = new System.Drawing.Point(23, 27);
