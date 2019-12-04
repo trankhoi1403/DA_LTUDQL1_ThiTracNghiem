@@ -191,11 +191,7 @@
             this.ckbDungSai.TabIndex = 10;
             this.ckbDungSai.Text = "Là đáp án đúng";
             this.ckbDungSai.UseVisualStyleBackColor = true;
-<<<<<<< HEAD
             //
-=======
-            // 
->>>>>>> ed8c6854f4c516fbb50069e68190b271d71dbb27
             // txtDapAn
             // 
             this.txtDapAn.Location = new System.Drawing.Point(23, 27);

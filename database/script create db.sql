@@ -58,9 +58,8 @@ create table DapAn(
 
 create table MonHoc(
 	maMH varchar(10),
-	maKhoi varchar(3),
 	tenMH nvarchar(1000),
-	primary key (maKhoi, maMH)
+	primary key (maMH)
 )
 
 create table KhoiLop(
@@ -82,7 +81,6 @@ create table NguoiDung(
 
 create table HocSinh(
 	maHS varchar(10) primary key,
-	maND varchar(10),				-- mã người dùng
 	HoTen nvarchar(1000),
 	NgaySinh datetime,
 	maKhoi varchar(3),
@@ -91,17 +89,16 @@ create table HocSinh(
 
 create table GiaoVien(
 	maGV varchar(10) primary key,
-	maND varchar(10),				-- mã người dùng
 	HoTen nvarchar(1000),
 	NgaySinh datetime,
+	maMH varchar(10)
 )
 
 create table CT_GiangDay(
 	maGV varchar(10),
 	maKhoi varchar(3),
 	maLop varchar(3),
-	maMH varchar(10)
-	primary key (maGV, maKhoi, maLop, maMH)
+	primary key (maGV, maKhoi, maLop)
 )
 go
 
@@ -117,7 +114,10 @@ alter table GiaoVien
 add 
 	constraint fk_gv_nd
 	foreign key (maGV)
-	references NguoiDung(maND)
+	references NguoiDung(maND),
+	constraint fk_gv_mh
+	foreign key (maMH)
+	references MonHoc(maMH)
 
 alter table CT_GiangDay
 add
@@ -139,11 +139,15 @@ add
 	constraint fk_t_hs
 	foreign key (maHS)
 	references HocSinh(maHS)
+
 alter table DeThi
 add
 	constraint fk_dt_mh
-	foreign key (maKhoi, maMH)
-	references MonHoc(maKhoi, maMH)
+	foreign key (maMH)
+	references MonHoc(maMH),
+	constraint fk_dt_kl
+	foreign key (maKhoi)
+	references KhoiLop(maKhoi)
 alter table CT_DeThi
 add
 	constraint fk_ctdt_dt
@@ -157,22 +161,17 @@ add
 	constraint fk_ch_cd
 	foreign key (maCD)
 	references CapDo(maCD),
-	constraint fk_ch_mh
-	foreign key (maKhoi, maMH)
-	references MonHoc(maKhoi, maMH),
 	constraint fk_ch_kl
 	foreign key (maKhoi)
-	references KhoiLop(maKhoi)
+	references KhoiLop(maKhoi),
+	constraint fk_ch_mh
+	foreign key (maMH)
+	references MonHoc(maMH)
 alter table DapAn
 add 
 	constraint fk_da_ch
 	foreign key (maCH)
 	references CauHoi(maCH)
-alter table MonHoc
-add
-	constraint fk_mh_kl
-	foreign key (maKhoi)
-	references KhoiLop(maKhoi)
 alter table LopHoc
 add
 	constraint fk_lh_kl
@@ -205,26 +204,27 @@ begin
 		set @c += 1
 	end
 
-	insert into MonHoc(maMH, maKhoi, tenMH) values ('T',  @maK, N'Toán')
-	insert into MonHoc(maMH, maKhoi, tenMH) values ('VL', @maK, N'Vật lý')
-	insert into MonHoc(maMH, maKhoi, tenMH) values ('HH', @maK, N'Hóa học')
-	insert into MonHoc(maMH, maKhoi, tenMH) values ('SH', @maK, N'Sinh học')
 	set @i += 1
 	set @c = 65
 end
 go
 
-insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values ('ND1', 'nguyenthily', '123', 'hs')
-insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values ('ND2', 'phanxieuthien', '123', 'hs')
-insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values ('ND3', 'trankhoi', '123', 'hs')
-insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values ('ND4', 'lethanhbbinh', '123', 'gv')
+insert into MonHoc(maMH, tenMH) values ('T',  N'Toán')
+insert into MonHoc(maMH, tenMH) values ('VL', N'Vật lý')
+insert into MonHoc(maMH, tenMH) values ('HH', N'Hóa học')
+insert into MonHoc(maMH, tenMH) values ('SH', N'Sinh học')
+
+insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1660339, 'nguyenthily', '123', 'hs')
+insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1660281, 'phanxieuthien', '123', 'hs')
+insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1461638, 'trankhoi', '123', 'hs')
+insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values (1760061, 'lethanhbbinh', '123', 'gv')
 go
 
-insert into HocSinh(maHS, maND, HoTen, NgaySinh, maKhoi, maLop) values(1, 'ND1', N'Nguyễn Thị Lý'  , '12/29/1998', 'K10', 'A1')
-insert into HocSinh(maHS, maND, HoTen, NgaySinh, maKhoi, maLop) values(2, 'ND2', N'Trần Khôi'      , '03/14/1998', 'K10', 'A1')
-insert into HocSinh(maHS, maND, HoTen, NgaySinh, maKhoi, maLop) values(3, 'ND3', N'Phan Xiêu Thiên', '01/09/1996', 'K12', 'A2')
+insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1660339, N'Nguyễn Thị Lý'  , '12/29/1998', 'K10', 'A1')
+insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1660281, N'Trần Khôi'      , '03/14/1998', 'K10', 'A1')
+insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1461638, N'Phan Xiêu Thiên', '01/09/1996', 'K12', 'A2')
 
-insert into GiaoVien(maGV,maND, HoTen, NgaySinh) values(4, 'ND4', N'Lê Thanh Bình', '11/20/1990')
+insert into GiaoVien(maGV,HoTen, NgaySinh) values(1760061, N'Lê Thanh Bình', '11/20/1990')
 go
 
 insert into CapDo values
@@ -353,4 +353,11 @@ delete from CapDo
 38, 
 39, 
 40, 
+*/
+
+/*
+bỏ mã khối trong bảng môn học: xong
+thêm khóa ngoại từ bảng giáo viên sang bảng môn học: xong
+bõ mã câu hỏi trong DeThi, thêm bảng chi tiết đề thi, tronng bảng chi tiết đề thi sẽ có mã đề thi và mã câu hỏi, cả hai cùng là khóa chính
+thêm khóa ngoại mã khối trong bảng câu hỏi tham chiếu đến bảng Khối
 */
