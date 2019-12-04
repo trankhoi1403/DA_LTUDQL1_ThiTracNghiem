@@ -18,7 +18,7 @@ create table KyThi(
 create table Thi(
 	maKT varchar(10), 
 	maDT int,
-	maHS int,
+	maHS varchar(10),
 	Diem decimal,
 	primary key (maKT, maDT, maHS)
 )
@@ -31,7 +31,7 @@ create table DeThi(
 
 create table CT_DeThi(
 	maDT int,
-	maCH int
+	maCH int,
 	primary key (maDT, maCH)
 )
 
@@ -58,8 +58,8 @@ create table DapAn(
 
 create table MonHoc(
 	maMH varchar(10),
-	tenMH nvarchar(1000),
 	maKhoi varchar(3),
+	tenMH nvarchar(1000),
 	primary key (maKhoi, maMH)
 )
 
@@ -74,15 +74,15 @@ create table LopHoc(
 )
 
 create table NguoiDung(
-	maND int primary key identity not null,
+	maND varchar(10) primary key,
 	TenND varchar(1000),
 	MatKhau varchar(1000),
 	LoaiND varchar(10)
 )
 
 create table HocSinh(
-	maHS int primary key,
-	maND int,
+	maHS varchar(10) primary key,
+	maND varchar(10),				-- mã người dùng
 	HoTen nvarchar(1000),
 	NgaySinh datetime,
 	maKhoi varchar(3),
@@ -90,18 +90,18 @@ create table HocSinh(
 )
 
 create table GiaoVien(
-	maGV int primary key,
-	maND int,
+	maGV varchar(10) primary key,
+	maND varchar(10),				-- mã người dùng
 	HoTen nvarchar(1000),
 	NgaySinh datetime,
-	maMH varchar(10)
 )
 
 create table CT_GiangDay(
-	maGV int,
+	maGV varchar(10),
 	maKhoi varchar(3),
 	maLop varchar(3),
-	primary key (maGV, maKhoi, maLop)
+	maMH varchar(10)
+	primary key (maGV, maKhoi, maLop, maMH)
 )
 go
 
@@ -142,9 +142,14 @@ add
 alter table DeThi
 add
 	constraint fk_dt_mh
-	foreign key (maMH)
-	references MonHoc(maMH),
-	constraint fk_dt_ch
+	foreign key (maKhoi, maMH)
+	references MonHoc(maKhoi, maMH)
+alter table CT_DeThi
+add
+	constraint fk_ctdt_dt
+	foreign key (maDT)
+	references DeThi(maDT),
+	constraint fk_ctdt_ch
 	foreign key (maCH)
 	references CauHoi(maCH)
 alter table CauHoi
@@ -153,8 +158,8 @@ add
 	foreign key (maCD)
 	references CapDo(maCD),
 	constraint fk_ch_mh
-	foreign key (maMH)
-	references MonHoc(maMH),
+	foreign key (maKhoi, maMH)
+	references MonHoc(maKhoi, maMH),
 	constraint fk_ch_kl
 	foreign key (maKhoi)
 	references KhoiLop(maKhoi)
@@ -182,7 +187,7 @@ go
 
 
 /* ================================ TẠO DỮ LIỆU MẪU =============================*/
--- thêm khối lớp 10,11,12, mỗi khối có 9 lớp A1 -> C3, mỗi khối có 4 môn Toán, vật lý, hóa học, sinh học
+-- thêm khối lớp K10,K11,K12, mỗi khối có 9 lớp A1 -> C3, mỗi khối có 4 môn Toán, vật lý, hóa học, sinh học
 declare @i int, @c int
 set @i = 10 
 set @c = 65
@@ -209,16 +214,17 @@ begin
 end
 go
 
-insert into NguoiDung(TenND, MatKhau, LoaiND) values ('nguyenthily', '123', 'hs')
-insert into NguoiDung(TenND, MatKhau, LoaiND) values ('phanxieuthien', '123', 'hs')
-insert into NguoiDung(TenND, MatKhau, LoaiND) values ('trankhoi', '123', 'hs')
-insert into NguoiDung(TenND, MatKhau, LoaiND) values ('lethanhbbinh', '123', 'gv')
+insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values ('ND1', 'nguyenthily', '123', 'hs')
+insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values ('ND2', 'phanxieuthien', '123', 'hs')
+insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values ('ND3', 'trankhoi', '123', 'hs')
+insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values ('ND4', 'lethanhbbinh', '123', 'gv')
 go
 
-insert into HocSinh(maHS, HoTen) values(1, N'Nguyễn Thị Lý')
-insert into HocSinh(maHS, HoTen) values(2, N'Phan Xiêu Thiên')
-insert into HocSinh(maHS, HoTen) values(3, N'Trần Khôi')
-insert into GiaoVien(maGV, HoTen) values(4, N'Lê Thanh Bình')
+insert into HocSinh(maHS, maND, HoTen, NgaySinh, maKhoi, maLop) values(1, 'ND1', N'Nguyễn Thị Lý'  , '12/29/1998', 'K10', 'A1')
+insert into HocSinh(maHS, maND, HoTen, NgaySinh, maKhoi, maLop) values(2, 'ND2', N'Trần Khôi'      , '03/14/1998', 'K10', 'A1')
+insert into HocSinh(maHS, maND, HoTen, NgaySinh, maKhoi, maLop) values(3, 'ND3', N'Phan Xiêu Thiên', '01/09/1996', 'K12', 'A2')
+
+insert into GiaoVien(maGV,maND, HoTen, NgaySinh) values(4, 'ND4', N'Lê Thanh Bình', '11/20/1990')
 go
 
 insert into CapDo values
