@@ -18,11 +18,8 @@ namespace ThiTracNghiem
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-<<<<<<< HEAD
+            Application.Run(new frmLogin());
             Application.Run(new frmHocSinh());
-=======
-            Application.Run(new frmGiaoVien());
->>>>>>> 546622a9ce5d23775475dbe82bf6190dcc1de0a5
-        }
+            }
     }
 }
