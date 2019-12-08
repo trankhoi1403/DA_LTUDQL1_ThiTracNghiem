@@ -58,7 +58,7 @@ namespace ThiTracNghiem
                 if (e.DesiredType == typeof(string))
                 {
                     int maCapDo = int.Parse(e.Value.ToString());
-                    e.Value = (cbCapDo.DataSource as List<CapDo>).Where(cd => cd.maCD == maCapDo).FirstOrDefault().NoiDung;
+                    e.Value = (cbCapDo.DataSource as List<CapDo>).Where(cd => cd.maCD == maCapDo).FirstOrDefault().TenCD;
                 }
             };
             cbCapDo.DataBindings[0].Parse += (s, e) =>
@@ -66,7 +66,7 @@ namespace ThiTracNghiem
                 if (e.DesiredType == typeof(int))
                 {
                     string noiDungCapDo = e.Value.ToString();
-                    e.Value = (cbCapDo.DataSource as List<CapDo>).Where(cd => cd.NoiDung == noiDungCapDo).FirstOrDefault().maCD;
+                    e.Value = (cbCapDo.DataSource as List<CapDo>).Where(cd => cd.TenCD == noiDungCapDo).FirstOrDefault().maCD;
                 }
             };
             ckbDungSai.DataBindings.Add("Checked", bsDapAn, "DungSai", true, DataSourceUpdateMode.Never, false);

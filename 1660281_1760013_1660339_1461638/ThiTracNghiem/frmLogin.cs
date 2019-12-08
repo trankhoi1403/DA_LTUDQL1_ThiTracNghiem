@@ -18,16 +18,58 @@ namespace ThiTracNghiem
             InitializeComponent();
             txtTenDangNhap.Validating += txtTenDangNhap_Validating;
             txtMatKhau.Validating += txtTenDangNhap_Validating;
-         
+            txtTenDangNhap.GotFocus += TxtTenDangNhap_GotFocus;
+            txtMatKhau.GotFocus += TxtTenDangNhap_GotFocus;
+
+            //this.Paint += (s, e) =>
+            // {
+            //     Image img = ThiTracNghiem.Properties.Resources.hinh_nen_form_login;
+            //     e.Graphics.DrawImage(img, groupBox1.Bounds);
+            // };
+
+            txtMatKhau.TextChanged += (s, e) =>
+             {
+                 using (var qlttn = new QLTTNDataContext())
+                 {
+                     NguoiDung nguoiDung = null;
+                     nguoiDung = qlttn.NguoiDungs.Where(nd => nd.TenND == txtTenDangNhap.Text && nd.MatKhau == txtMatKhau.Text).SingleOrDefault();
+                     if (nguoiDung != null)
+                     {
+                         Form frm = null;
+                         if (nguoiDung.LoaiND == "hs")
+                         {
+                             frm = new frmHocSinh();
+                         }
+                         else if (nguoiDung.LoaiND == "gv")
+                         {
+                             frm = new frmGiaoVien(this, nguoiDung.GiaoVien);
+                         }
+                         else if (nguoiDung.LoaiND == "ad")
+                         {
+                             frm = new frmAdmin();
+                         }
+                         if (frm != null)
+                         {
+                             frm.Show();
+                             this.Hide();
+                         }
+                     }
+                 }
+             };
+
         }
 
-    
+        private void TxtTenDangNhap_GotFocus(object sender, EventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            t.SelectAll();
+        }
 
         private void txtTenDangNhap_Validating(object sender, CancelEventArgs e)
         {
             var ctrl = sender as Control;
             var strInput = ctrl.Text;
-            if(strInput.Length==0)
+            if (strInput.Length == 0)
             {
                 errorProviderMain.SetError(ctrl, "not input");
             }
@@ -35,17 +77,6 @@ namespace ThiTracNghiem
             {
                 errorProviderMain.SetError(ctrl, "");
             }
-            var reStr = @"^[a-z][a-z0-9_\.]{2,9}$";
-            var re = new Regex(reStr);
-            if(!re.IsMatch(strInput))
-            {
-                errorProviderMain.SetError(ctrl, "not match");
-            }
-            else
-            {
-                errorProviderMain.SetError(ctrl, "");
-            }
         }
     }
-
 }

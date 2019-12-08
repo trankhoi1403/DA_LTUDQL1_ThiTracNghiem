@@ -2,6 +2,7 @@
 go
 if db_ID('QLTTN') is not null
 begin
+	ALTER DATABASE QLTTN SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 	drop database QLTTN
 end
 create database QLTTN
@@ -26,7 +27,11 @@ create table Thi(
 create table DeThi(
 	maDT int primary key identity not null,
 	maMH varchar(10),
-	maKhoi varchar(3)
+	maKhoi varchar(3),
+	maGV varchar(10),
+	TenDT nvarchar(1000),
+	ThoiGianLamBai time,
+	NgayTao DateTime
 )
 
 create table CT_DeThi(
@@ -45,7 +50,7 @@ create table CauHoi(
 
 create table CapDo(
 	maCD int primary key identity not null,
-	NoiDung nvarchar(1000)
+	TenCD nvarchar(1000)
 )
 
 create table DapAn(
@@ -98,6 +103,7 @@ create table CT_GiangDay(
 	maGV varchar(10),
 	maKhoi varchar(3),
 	maLop varchar(3),
+	SiSo int,
 	primary key (maGV, maKhoi, maLop)
 )
 go
@@ -147,7 +153,10 @@ add
 	references MonHoc(maMH),
 	constraint fk_dt_kl
 	foreign key (maKhoi)
-	references KhoiLop(maKhoi)
+	references KhoiLop(maKhoi),
+	constraint fk_dt_gv
+	foreign key (maGV)
+	references GiaoVien(maGV)
 alter table CT_DeThi
 add
 	constraint fk_ctdt_dt
@@ -184,9 +193,11 @@ add
 	references LopHoc(maKhoi, maLop)
 go
 
+/* ================================ TẠO TRIGGER =============================*/
+
 
 /* ================================ TẠO DỮ LIỆU MẪU =============================*/
--- thêm khối lớp K10,K11,K12, mỗi khối có 9 lớp A1 -> C3, mỗi khối có 4 môn Toán, vật lý, hóa học, sinh học
+-- thêm khối lớp K10,K11,K12, mỗi khối có 9 lớp A1 -> C3
 declare @i int, @c int
 set @i = 10 
 set @c = 65
@@ -213,18 +224,26 @@ insert into MonHoc(maMH, tenMH) values ('T',  N'Toán')
 insert into MonHoc(maMH, tenMH) values ('VL', N'Vật lý')
 insert into MonHoc(maMH, tenMH) values ('HH', N'Hóa học')
 insert into MonHoc(maMH, tenMH) values ('SH', N'Sinh học')
+insert into MonHoc(maMH, tenMH) values ('TVH', N'Thiên Văn Học')
 
 insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1660339, 'nguyenthily', '123', 'hs')
 insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1660281, 'phanxieuthien', '123', 'hs')
 insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1461638, 'trankhoi', '123', 'hs')
-insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values (1760061, 'lethanhbbinh', '123', 'gv')
+insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values (1760013, 'lethanhbbinh', '123', 'gv')
+insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values (1721001902, 'tranlamngoc', '123', 'gv')
 go
 
 insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1660339, N'Nguyễn Thị Lý'  , '12/29/1998', 'K10', 'A1')
 insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1660281, N'Trần Khôi'      , '03/14/1998', 'K10', 'A1')
 insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1461638, N'Phan Xiêu Thiên', '01/09/1996', 'K12', 'A2')
 
-insert into GiaoVien(maGV,HoTen, NgaySinh) values(1760061, N'Lê Thanh Bình', '11/20/1990')
+insert into GiaoVien(maGV,HoTen, NgaySinh, MaMH) values(1760013, N'Lê Thanh Bình', '11/20/1990', 'T')
+insert into GiaoVien(maGV,HoTen, NgaySinh, MaMH) values(1721001902, N'Trần Lam Ngọc', '09/21/1999', 'T')
+go
+
+insert into CT_GiangDay(maGV, maKhoi, maLop, SiSo) values(1760013, 'K10', 'A1', 30)
+insert into CT_GiangDay(maGV, maKhoi, maLop, SiSo) values(1760013, 'K12', 'A2', 30)
+insert into CT_GiangDay(maGV, maKhoi, maLop, SiSo) values(1721001902, 'K10', 'A1', 30)
 go
 
 insert into CapDo values
@@ -234,21 +253,26 @@ insert into CapDo values
 (N'Đại bàng')
 go
 
-insert into CauHoi(maCD, NoiDung) values
-(1, N'Trong hệ Mặt Trời, hai hành tinh nào không có vệ tinh? '),
-(1, N'Trọng lực bề mặt Trái Đất nặng gấp mấy lần trọng lực bề mặt Mặt Trăng? '),
-(1, N'Mất bao lâu để tia sáng từ Mặt Trời đến Trái Đất? '),
-(2, N'Anh hùng Phạm Tuân của Việt Nam đã bay lên vũ trụ năm 1980 trong một chương trình của nước nào? '),
-(2, N'Con tàu đầu tiên đưa người lên Mặt Trăng là con tàu mang tên gì? '),
-(2, N'Vũ trụ hình thành từ đâu? '),
-(3, N'Sự nở ra của vũ trụ được phát hiện bởi nhà thiên văn nào? '),
-(3, N'Vũ trụ giãn nở mà không co lại do đâu? '),
-(3, N'Giả thuyết đến nay đã được khẳng định về vũ trụ giãn nở vĩnh viễn có tên là gì? '),
-( 4, N'Sự sống đã hình thành trên trái đất như thế nào? '),
-( 4, N'Cái gì gây ra trọng lực? ')
+insert into CauHoi(maMH, maKhoi, maCD, NoiDung) values
+('TVH', 'K12', 1, N'Trong hệ Mặt Trời, hai hành tinh nào không có vệ tinh? '),
+('TVH', 'K12', 1, N'Trọng lực bề mặt Trái Đất nặng gấp mấy lần trọng lực bề mặt Mặt Trăng? '),
+('TVH', 'K12', 1, N'Mất bao lâu để tia sáng từ Mặt Trời đến Trái Đất? '),
+('TVH', 'K12', 2, N'Anh hùng Phạm Tuân của Việt Nam đã bay lên vũ trụ năm 1980 trong một chương trình của nước nào? '),
+('TVH', 'K12', 2, N'Con tàu đầu tiên đưa người lên Mặt Trăng là con tàu mang tên gì? '),
+('TVH', 'K12', 2, N'Vũ trụ hình thành từ đâu? '),
+('TVH', 'K12', 3, N'Sự nở ra của vũ trụ được phát hiện bởi nhà thiên văn nào? '),
+('TVH', 'K12', 3, N'Vũ trụ giãn nở mà không co lại do đâu? '),
+('TVH', 'K12', 3, N'Giả thuyết đến nay đã được khẳng định về vũ trụ giãn nở vĩnh viễn có tên là gì? '),
+('TVH', 'K12', 4, N'Sự sống đã hình thành trên trái đất như thế nào? '),
+('TVH', 'K12', 4, N'Cái gì gây ra trọng lực? '),
+
+('T', 'K10', 1, N'Hai phương trình được gọi là tương đương khi ?'),
+('T', 'K10', 1, N'Cho phương trình:  f1(x) = g1(x) (1); f2(x) = g2(x) (2);  f1(x) + f2(x) = g2(x) + g2(x) (3).')
+
 go
 
 insert into DapAn(maCH, NoiDung, DungSai) values
+--------------- đáp án môn THiên Văn Học K12
 (1,  N'Sao Thủy và sao Kim', 1),
 (1,  N'Sao Hỏa và sao Mộc', 0),
 (1,  N'Sao Thổ và sao Thiên Vương', 0),
@@ -288,8 +312,38 @@ insert into DapAn(maCH, NoiDung, DungSai) values
 (11, N'Trọng lực là yếu nhất trong tất cả dạng lực đã biết trong vũ trụ và mô hình vật lý tiêu chuẩn hiện nay cũng không giải thích được cách thức hoạt động của nó. Các nhà vật lý lý thuyết cho rằng, trọng lực có thể liên quan đến những hạt rất nhỏ, không có khối lượng gọi là graviton. Những hạt này đã toả ra các từ trọng trường.', 0),
 (11, N'Khoa học vẫn chưa tìm ra được', 1),
 (11, N'Trọng lực hoàn toàn khác các lực còn lại được mô tả trong vật lý tiêu chuẩn', 0),
-(11, N'Tôi không biết', 0)
+(11, N'Tôi không biết', 0),
+
+------------ đáp án Môn Toán K10
+(12, N'(3) tương đương với (1) hoặc (2)', 0),            
+(12, N'(2) là hệ quả của (3)', 0),
+(12, N'(3) là hệ quả của (1)',0),                     
+(12, N'Các phát biểu a, b, c đều sai.', 1),
+(13, N'Có cùng dạng phương trình', 0),
+(13, N'Có cùng tập xác định', 0),                   
+(13, N'Có cùng tập hợp nghiệm', 0),       
+(13, N'Cả a, b, c đều đúng', 1)
+
 go
+
+--create table DeThi(
+--	maDT int primary key identity not null,
+--	maMH varchar(10),
+--	maKhoi varchar(3),
+--	maGV varchar(10),
+--	TenDT nvarchar(1000),
+--	ThoiGianLamBai time,
+--	NgayTao DateTime
+--)
+
+--create table CT_DeThi(
+--	maDT int,
+--	maCH int,
+--	primary key (maDT, maCH)
+--)
+
+--insert into DeThi()
+
 
 use QLTTN
 select * from CauHoi
