@@ -12,16 +12,20 @@ go
 
 /* ============================= TẠO BẢNG VÀ KHÓA CHÍNH =============================*/
 create table KyThi(
-	maKT varchar(10) primary key,
-	NgayThi datetime
+	maKT int primary key identity not null,
+	TenKT nvarchar(100),
+	NgayThi datetime,
+	LoaiKT varchar(10),
+	maGV varchar(10), -- thông tin giáo viên tạo kỳ thi
+	DaThi bit
 )
 
 create table Thi(
-	maKT varchar(10), 
-	maDT int,
 	maHS varchar(10),
-	Diem decimal,
-	primary key (maKT, maDT, maHS)
+	maDT int,
+	maKT int,
+	Diem decimal
+	primary key (maHS, maDT, maKT)
 )
 
 create table DeThi(
@@ -29,7 +33,7 @@ create table DeThi(
 	maMH varchar(10),
 	maKhoi varchar(3),
 	maGV varchar(10),
-	TenDT nvarchar(1000),
+	TenDT nvarchar(100),
 	ThoiGianLamBai time,
 	NgayTao DateTime
 )
@@ -50,7 +54,7 @@ create table CauHoi(
 
 create table CapDo(
 	maCD int primary key identity not null,
-	TenCD nvarchar(1000)
+	TenCD nvarchar(100)
 )
 
 create table DapAn(
@@ -63,7 +67,7 @@ create table DapAn(
 
 create table MonHoc(
 	maMH varchar(10),
-	tenMH nvarchar(1000),
+	tenMH nvarchar(100),
 	primary key (maMH)
 )
 
@@ -79,14 +83,19 @@ create table LopHoc(
 
 create table NguoiDung(
 	maND varchar(10) primary key,
-	TenND varchar(1000),
-	MatKhau varchar(1000),
-	LoaiND varchar(10)
+	TenND varchar(100),
+	MatKhau varchar(100),
+	maLND varchar(10)
+)
+
+create table LoaiNguoiDung(
+	maLND varchar(10) primary key,
+	TenLND nvarchar(100),
 )
 
 create table HocSinh(
 	maHS varchar(10) primary key,
-	HoTen nvarchar(1000),
+	HoTen nvarchar(100),
 	NgaySinh datetime,
 	maKhoi varchar(3),
 	maLop varchar(3)
@@ -94,7 +103,7 @@ create table HocSinh(
 
 create table GiaoVien(
 	maGV varchar(10) primary key,
-	HoTen nvarchar(1000),
+	HoTen nvarchar(100),
 	NgaySinh datetime,
 	maMH varchar(10)
 )
@@ -134,6 +143,12 @@ add
 	foreign key (maKhoi, maLop)
 	references LopHoc(maKhoi, maLop)
 
+alter table KyThi
+add 
+	constraint fk_kt_gv
+	foreign key (maGV)
+	references GiaoVien(maGV)
+
 alter table Thi
 add
 	constraint fk_t_kt
@@ -157,6 +172,7 @@ add
 	constraint fk_dt_gv
 	foreign key (maGV)
 	references GiaoVien(maGV)
+
 alter table CT_DeThi
 add
 	constraint fk_ctdt_dt
@@ -165,6 +181,7 @@ add
 	constraint fk_ctdt_ch
 	foreign key (maCH)
 	references CauHoi(maCH)
+
 alter table CauHoi
 add 
 	constraint fk_ch_cd
@@ -176,22 +193,31 @@ add
 	constraint fk_ch_mh
 	foreign key (maMH)
 	references MonHoc(maMH)
+
 alter table DapAn
 add 
 	constraint fk_da_ch
 	foreign key (maCH)
 	references CauHoi(maCH)
+
 alter table LopHoc
 add
 	constraint fk_lh_kl
 	foreign key (maKhoi)
 	references KhoiLop(maKhoi)
+
 alter table HocSinh
 add
 	constraint fk_hs_lh
 	foreign key (maKhoi, maLop)
 	references LopHoc(maKhoi, maLop)
 go
+
+alter table NguoiDung
+add 
+	constraint fk_nd_lnd
+	foreign key (maLND)
+	references LoaiNguoiDung(maLND)
 
 /* ================================ TẠO TRIGGER =============================*/
 
@@ -223,14 +249,20 @@ go
 insert into MonHoc(maMH, tenMH) values ('T',  N'Toán')
 insert into MonHoc(maMH, tenMH) values ('VL', N'Vật lý')
 insert into MonHoc(maMH, tenMH) values ('HH', N'Hóa học')
-insert into MonHoc(maMH, tenMH) values ('SH', N'Sinh học')
+insert into MonHoc(maMH, tenMH) values ('AV', N'Anh văn')
 insert into MonHoc(maMH, tenMH) values ('TVH', N'Thiên Văn Học')
 
-insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1660339, 'nguyenthily', '123', 'hs')
-insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1660281, 'phanxieuthien', '123', 'hs')
-insert into NguoiDung(MaND, TenND, MatKhau, LoaiND) values (1461638, 'trankhoi', '123', 'hs')
-insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values (1760013, 'lethanhbbinh', '123', 'gv')
-insert into NguoiDung(maND, TenND, MatKhau, LoaiND) values (1721001902, 'tranlamngoc', '123', 'gv')
+insert into LoaiNguoiDung(maLND, TenLND) values ('HS', N'Học sinh')
+insert into LoaiNguoiDung(maLND, TenLND) values ('GV', N'Giáo viên')
+insert into LoaiNguoiDung(maLND, TenLND) values ('AD', N'Quản trị viên')
+go
+
+insert into NguoiDung(MaND, TenND, MatKhau, maLND) values (1660339, 'nguyenthily', '123', 'HS')
+insert into NguoiDung(MaND, TenND, MatKhau, maLND) values (1660281, 'phanxieuthien', '123', 'HS')
+insert into NguoiDung(MaND, TenND, MatKhau, maLND) values (1461638, 'trankhoi', '123', 'HS')
+insert into NguoiDung(maND, TenND, MatKhau, maLND) values (1760013, 'lethanhbbinh', '123', 'GV')
+insert into NguoiDung(maND, TenND, MatKhau, maLND) values (1721001902, 'tranlamngoc', '123', 'GV')
+insert into NguoiDung(maND, TenND, MatKhau, maLND) values (1, 'ad', '123', 'AD')
 go
 
 insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1660339, N'Nguyễn Thị Lý'  , '12/29/1998', 'K10', 'A1')
@@ -266,7 +298,7 @@ insert into CauHoi(maMH, maKhoi, maCD, NoiDung) values
 ('TVH', 'K12', 4, N'Sự sống đã hình thành trên trái đất như thế nào? '),
 ('TVH', 'K12', 4, N'Cái gì gây ra trọng lực? '),
 
-('T', 'K10', 1, N'Hai phương trình được gọi là tương đương khi ?'),
+('T', 'K10', 1, N'Hai phương trình được gọi là tương đương khi:'),
 ('T', 'K10', 1, N'Cho phương trình:  f1(x) = g1(x) (1); f2(x) = g2(x) (2);  f1(x) + f2(x) = g2(x) + g2(x) (3).')
 
 go
@@ -331,7 +363,7 @@ go
 --	maMH varchar(10),
 --	maKhoi varchar(3),
 --	maGV varchar(10),
---	TenDT nvarchar(1000),
+--	TenDT nvarchar(100),
 --	ThoiGianLamBai time,
 --	NgayTao DateTime
 --)

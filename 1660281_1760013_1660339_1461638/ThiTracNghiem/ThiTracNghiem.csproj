@@ -177,5 +177,8 @@
     </None>
     <None Include="Resources\hinh-nen-form-login.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\delete %281%29.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

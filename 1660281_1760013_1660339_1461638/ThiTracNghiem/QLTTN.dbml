@@ -3,7 +3,7 @@
   <Table Name="dbo.CapDo" Member="CapDos">
     <Type Name="CapDo">
       <Column Name="maCD" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="TenCD" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="TenCD" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Association Name="CapDo_CauHoi" Member="CauHois" ThisKey="maCD" OtherKey="maCD" Type="CauHoi" />
     </Type>
   </Table>
@@ -54,7 +54,7 @@
       <Column Name="maMH" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Column Name="maKhoi" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
       <Column Name="maGV" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
-      <Column Name="TenDT" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="TenDT" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="ThoiGianLamBai" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
       <Column Name="NgayTao" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="DeThi_CT_DeThi" Member="CT_DeThis" ThisKey="maDT" OtherKey="maDT" Type="CT_DeThi" />
@@ -67,11 +67,12 @@
   <Table Name="dbo.GiaoVien" Member="GiaoViens">
     <Type Name="GiaoVien">
       <Column Name="maGV" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="HoTen" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="HoTen" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="NgaySinh" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="maMH" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Association Name="GiaoVien_CT_GiangDay" Member="CT_GiangDays" ThisKey="maGV" OtherKey="maGV" Type="CT_GiangDay" />
       <Association Name="GiaoVien_DeThi" Member="DeThis" ThisKey="maGV" OtherKey="maGV" Type="DeThi" />
+      <Association Name="GiaoVien_KyThi" Member="KyThis" ThisKey="maGV" OtherKey="maGV" Type="KyThi" />
       <Association Name="MonHoc_GiaoVien" Member="MonHoc" ThisKey="maMH" OtherKey="maMH" Type="MonHoc" IsForeignKey="true" />
       <Association Name="NguoiDung_GiaoVien" Member="NguoiDung" ThisKey="maGV" OtherKey="maND" Type="NguoiDung" IsForeignKey="true" />
     </Type>
@@ -79,7 +80,7 @@
   <Table Name="dbo.HocSinh" Member="HocSinhs">
     <Type Name="HocSinh">
       <Column Name="maHS" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="HoTen" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="HoTen" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="NgaySinh" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="maKhoi" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
       <Column Name="maLop" Type="System.String" DbType="VarChar(3)" CanBeNull="true" />
@@ -98,9 +99,20 @@
   </Table>
   <Table Name="dbo.KyThi" Member="KyThis">
     <Type Name="KyThi">
-      <Column Name="maKT" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maKT" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TenKT" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="NgayThi" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LoaiKT" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="maGV" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="DaThi" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Association Name="KyThi_Thi" Member="This" ThisKey="maKT" OtherKey="maKT" Type="Thi" />
+      <Association Name="GiaoVien_KyThi" Member="GiaoVien" ThisKey="maGV" OtherKey="maGV" Type="GiaoVien" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LoaiNguoiDung" Member="LoaiNguoiDungs">
+    <Type Name="LoaiNguoiDung">
+      <Column Name="maLND" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenLND" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.LopHoc" Member="LopHocs">
@@ -115,7 +127,7 @@
   <Table Name="dbo.MonHoc" Member="MonHocs">
     <Type Name="MonHoc">
       <Column Name="maMH" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="tenMH" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="tenMH" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Association Name="MonHoc_CauHoi" Member="CauHois" ThisKey="maMH" OtherKey="maMH" Type="CauHoi" />
       <Association Name="MonHoc_DeThi" Member="DeThis" ThisKey="maMH" OtherKey="maMH" Type="DeThi" />
       <Association Name="MonHoc_GiaoVien" Member="GiaoViens" ThisKey="maMH" OtherKey="maMH" Type="GiaoVien" />
@@ -124,18 +136,18 @@
   <Table Name="dbo.NguoiDung" Member="NguoiDungs">
     <Type Name="NguoiDung">
       <Column Name="maND" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="TenND" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
-      <Column Name="MatKhau" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
-      <Column Name="LoaiND" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="TenND" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="MatKhau" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="maLND" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Association Name="NguoiDung_GiaoVien" Member="GiaoVien" ThisKey="maND" OtherKey="maGV" Type="GiaoVien" Cardinality="One" />
       <Association Name="NguoiDung_HocSinh" Member="HocSinh" ThisKey="maND" OtherKey="maHS" Type="HocSinh" Cardinality="One" />
     </Type>
   </Table>
   <Table Name="dbo.Thi" Member="This">
     <Type Name="Thi">
-      <Column Name="maKT" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="maDT" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="maHS" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maDT" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maKT" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Diem" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
       <Association Name="DeThi_Thi" Member="DeThi" ThisKey="maDT" OtherKey="maDT" Type="DeThi" IsForeignKey="true" />
       <Association Name="HocSinh_Thi" Member="HocSinh" ThisKey="maHS" OtherKey="maHS" Type="HocSinh" IsForeignKey="true" />

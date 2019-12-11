@@ -60,6 +60,9 @@ namespace ThiTracNghiem
     partial void InsertKyThi(KyThi instance);
     partial void UpdateKyThi(KyThi instance);
     partial void DeleteKyThi(KyThi instance);
+    partial void InsertLoaiNguoiDung(LoaiNguoiDung instance);
+    partial void UpdateLoaiNguoiDung(LoaiNguoiDung instance);
+    partial void DeleteLoaiNguoiDung(LoaiNguoiDung instance);
     partial void InsertLopHoc(LopHoc instance);
     partial void UpdateLopHoc(LopHoc instance);
     partial void DeleteLopHoc(LopHoc instance);
@@ -184,6 +187,14 @@ namespace ThiTracNghiem
 			}
 		}
 		
+		public System.Data.Linq.Table<LoaiNguoiDung> LoaiNguoiDungs
+		{
+			get
+			{
+				return this.GetTable<LoaiNguoiDung>();
+			}
+		}
+		
 		public System.Data.Linq.Table<LopHoc> LopHocs
 		{
 			get
@@ -265,7 +276,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenCD", DbType="NVarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenCD", DbType="NVarChar(100)")]
 		public string TenCD
 		{
 			get
@@ -1385,7 +1396,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenDT", DbType="NVarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenDT", DbType="NVarChar(100)")]
 		public string TenDT
 		{
 			get
@@ -1636,6 +1647,8 @@ namespace ThiTracNghiem
 		
 		private EntitySet<DeThi> _DeThis;
 		
+		private EntitySet<KyThi> _KyThis;
+		
 		private EntityRef<MonHoc> _MonHoc;
 		
 		private EntityRef<NguoiDung> _NguoiDung;
@@ -1658,6 +1671,7 @@ namespace ThiTracNghiem
 		{
 			this._CT_GiangDays = new EntitySet<CT_GiangDay>(new Action<CT_GiangDay>(this.attach_CT_GiangDays), new Action<CT_GiangDay>(this.detach_CT_GiangDays));
 			this._DeThis = new EntitySet<DeThi>(new Action<DeThi>(this.attach_DeThis), new Action<DeThi>(this.detach_DeThis));
+			this._KyThis = new EntitySet<KyThi>(new Action<KyThi>(this.attach_KyThis), new Action<KyThi>(this.detach_KyThis));
 			this._MonHoc = default(EntityRef<MonHoc>);
 			this._NguoiDung = default(EntityRef<NguoiDung>);
 			OnCreated();
@@ -1687,7 +1701,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HoTen", DbType="NVarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HoTen", DbType="NVarChar(100)")]
 		public string HoTen
 		{
 			get
@@ -1774,6 +1788,19 @@ namespace ThiTracNghiem
 			set
 			{
 				this._DeThis.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GiaoVien_KyThi", Storage="_KyThis", ThisKey="maGV", OtherKey="maGV")]
+		public EntitySet<KyThi> KyThis
+		{
+			get
+			{
+				return this._KyThis;
+			}
+			set
+			{
+				this._KyThis.Assign(value);
 			}
 		}
 		
@@ -1888,6 +1915,18 @@ namespace ThiTracNghiem
 			this.SendPropertyChanging();
 			entity.GiaoVien = null;
 		}
+		
+		private void attach_KyThis(KyThi entity)
+		{
+			this.SendPropertyChanging();
+			entity.GiaoVien = this;
+		}
+		
+		private void detach_KyThis(KyThi entity)
+		{
+			this.SendPropertyChanging();
+			entity.GiaoVien = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.HocSinh")]
@@ -1960,7 +1999,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HoTen", DbType="NVarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HoTen", DbType="NVarChar(100)")]
 		public string HoTen
 		{
 			get
@@ -2316,30 +2355,49 @@ namespace ThiTracNghiem
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private string _maKT;
+		private int _maKT;
+		
+		private string _TenKT;
 		
 		private System.Nullable<System.DateTime> _NgayThi;
 		
+		private string _LoaiKT;
+		
+		private string _maGV;
+		
+		private System.Nullable<bool> _DaThi;
+		
 		private EntitySet<Thi> _This;
+		
+		private EntityRef<GiaoVien> _GiaoVien;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnmaKTChanging(string value);
+    partial void OnmaKTChanging(int value);
     partial void OnmaKTChanged();
+    partial void OnTenKTChanging(string value);
+    partial void OnTenKTChanged();
     partial void OnNgayThiChanging(System.Nullable<System.DateTime> value);
     partial void OnNgayThiChanged();
+    partial void OnLoaiKTChanging(string value);
+    partial void OnLoaiKTChanged();
+    partial void OnmaGVChanging(string value);
+    partial void OnmaGVChanged();
+    partial void OnDaThiChanging(System.Nullable<bool> value);
+    partial void OnDaThiChanged();
     #endregion
 		
 		public KyThi()
 		{
 			this._This = new EntitySet<Thi>(new Action<Thi>(this.attach_This), new Action<Thi>(this.detach_This));
+			this._GiaoVien = default(EntityRef<GiaoVien>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maKT", DbType="VarChar(10) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string maKT
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maKT", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int maKT
 		{
 			get
 			{
@@ -2354,6 +2412,26 @@ namespace ThiTracNghiem
 					this._maKT = value;
 					this.SendPropertyChanged("maKT");
 					this.OnmaKTChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenKT", DbType="NVarChar(100)")]
+		public string TenKT
+		{
+			get
+			{
+				return this._TenKT;
+			}
+			set
+			{
+				if ((this._TenKT != value))
+				{
+					this.OnTenKTChanging(value);
+					this.SendPropertyChanging();
+					this._TenKT = value;
+					this.SendPropertyChanged("TenKT");
+					this.OnTenKTChanged();
 				}
 			}
 		}
@@ -2378,6 +2456,70 @@ namespace ThiTracNghiem
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoaiKT", DbType="VarChar(10)")]
+		public string LoaiKT
+		{
+			get
+			{
+				return this._LoaiKT;
+			}
+			set
+			{
+				if ((this._LoaiKT != value))
+				{
+					this.OnLoaiKTChanging(value);
+					this.SendPropertyChanging();
+					this._LoaiKT = value;
+					this.SendPropertyChanged("LoaiKT");
+					this.OnLoaiKTChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maGV", DbType="VarChar(10)")]
+		public string maGV
+		{
+			get
+			{
+				return this._maGV;
+			}
+			set
+			{
+				if ((this._maGV != value))
+				{
+					if (this._GiaoVien.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnmaGVChanging(value);
+					this.SendPropertyChanging();
+					this._maGV = value;
+					this.SendPropertyChanged("maGV");
+					this.OnmaGVChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DaThi", DbType="Bit")]
+		public System.Nullable<bool> DaThi
+		{
+			get
+			{
+				return this._DaThi;
+			}
+			set
+			{
+				if ((this._DaThi != value))
+				{
+					this.OnDaThiChanging(value);
+					this.SendPropertyChanging();
+					this._DaThi = value;
+					this.SendPropertyChanged("DaThi");
+					this.OnDaThiChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="KyThi_Thi", Storage="_This", ThisKey="maKT", OtherKey="maKT")]
 		public EntitySet<Thi> This
 		{
@@ -2388,6 +2530,40 @@ namespace ThiTracNghiem
 			set
 			{
 				this._This.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GiaoVien_KyThi", Storage="_GiaoVien", ThisKey="maGV", OtherKey="maGV", IsForeignKey=true)]
+		public GiaoVien GiaoVien
+		{
+			get
+			{
+				return this._GiaoVien.Entity;
+			}
+			set
+			{
+				GiaoVien previousValue = this._GiaoVien.Entity;
+				if (((previousValue != value) 
+							|| (this._GiaoVien.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._GiaoVien.Entity = null;
+						previousValue.KyThis.Remove(this);
+					}
+					this._GiaoVien.Entity = value;
+					if ((value != null))
+					{
+						value.KyThis.Add(this);
+						this._maGV = value.maGV;
+					}
+					else
+					{
+						this._maGV = default(string);
+					}
+					this.SendPropertyChanged("GiaoVien");
+				}
 			}
 		}
 		
@@ -2421,6 +2597,92 @@ namespace ThiTracNghiem
 		{
 			this.SendPropertyChanging();
 			entity.KyThi = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.LoaiNguoiDung")]
+	public partial class LoaiNguoiDung : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _maLND;
+		
+		private string _TenLND;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnmaLNDChanging(string value);
+    partial void OnmaLNDChanged();
+    partial void OnTenLNDChanging(string value);
+    partial void OnTenLNDChanged();
+    #endregion
+		
+		public LoaiNguoiDung()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maLND", DbType="VarChar(10) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string maLND
+		{
+			get
+			{
+				return this._maLND;
+			}
+			set
+			{
+				if ((this._maLND != value))
+				{
+					this.OnmaLNDChanging(value);
+					this.SendPropertyChanging();
+					this._maLND = value;
+					this.SendPropertyChanged("maLND");
+					this.OnmaLNDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenLND", DbType="NVarChar(100)")]
+		public string TenLND
+		{
+			get
+			{
+				return this._TenLND;
+			}
+			set
+			{
+				if ((this._TenLND != value))
+				{
+					this.OnTenLNDChanging(value);
+					this.SendPropertyChanging();
+					this._TenLND = value;
+					this.SendPropertyChanged("TenLND");
+					this.OnTenLNDChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -2661,7 +2923,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_tenMH", DbType="NVarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_tenMH", DbType="NVarChar(100)")]
 		public string tenMH
 		{
 			get
@@ -2789,7 +3051,7 @@ namespace ThiTracNghiem
 		
 		private string _MatKhau;
 		
-		private string _LoaiND;
+		private string _maLND;
 		
 		private EntityRef<GiaoVien> _GiaoVien;
 		
@@ -2805,8 +3067,8 @@ namespace ThiTracNghiem
     partial void OnTenNDChanged();
     partial void OnMatKhauChanging(string value);
     partial void OnMatKhauChanged();
-    partial void OnLoaiNDChanging(string value);
-    partial void OnLoaiNDChanged();
+    partial void OnmaLNDChanging(string value);
+    partial void OnmaLNDChanged();
     #endregion
 		
 		public NguoiDung()
@@ -2836,7 +3098,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenND", DbType="VarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenND", DbType="VarChar(100)")]
 		public string TenND
 		{
 			get
@@ -2856,7 +3118,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MatKhau", DbType="VarChar(1000)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MatKhau", DbType="VarChar(100)")]
 		public string MatKhau
 		{
 			get
@@ -2876,22 +3138,22 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoaiND", DbType="VarChar(10)")]
-		public string LoaiND
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maLND", DbType="VarChar(10)")]
+		public string maLND
 		{
 			get
 			{
-				return this._LoaiND;
+				return this._maLND;
 			}
 			set
 			{
-				if ((this._LoaiND != value))
+				if ((this._maLND != value))
 				{
-					this.OnLoaiNDChanging(value);
+					this.OnmaLNDChanging(value);
 					this.SendPropertyChanging();
-					this._LoaiND = value;
-					this.SendPropertyChanged("LoaiND");
-					this.OnLoaiNDChanged();
+					this._maLND = value;
+					this.SendPropertyChanged("maLND");
+					this.OnmaLNDChanged();
 				}
 			}
 		}
@@ -2981,11 +3243,11 @@ namespace ThiTracNghiem
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private string _maKT;
+		private string _maHS;
 		
 		private int _maDT;
 		
-		private string _maHS;
+		private int _maKT;
 		
 		private System.Nullable<decimal> _Diem;
 		
@@ -2999,12 +3261,12 @@ namespace ThiTracNghiem
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnmaKTChanging(string value);
-    partial void OnmaKTChanged();
-    partial void OnmaDTChanging(int value);
-    partial void OnmaDTChanged();
     partial void OnmaHSChanging(string value);
     partial void OnmaHSChanged();
+    partial void OnmaDTChanging(int value);
+    partial void OnmaDTChanged();
+    partial void OnmaKTChanging(int value);
+    partial void OnmaKTChanged();
     partial void OnDiemChanging(System.Nullable<decimal> value);
     partial void OnDiemChanged();
     #endregion
@@ -3017,26 +3279,26 @@ namespace ThiTracNghiem
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maKT", DbType="VarChar(10) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string maKT
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maHS", DbType="VarChar(10) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string maHS
 		{
 			get
 			{
-				return this._maKT;
+				return this._maHS;
 			}
 			set
 			{
-				if ((this._maKT != value))
+				if ((this._maHS != value))
 				{
-					if (this._KyThi.HasLoadedOrAssignedValue)
+					if (this._HocSinh.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnmaKTChanging(value);
+					this.OnmaHSChanging(value);
 					this.SendPropertyChanging();
-					this._maKT = value;
-					this.SendPropertyChanged("maKT");
-					this.OnmaKTChanged();
+					this._maHS = value;
+					this.SendPropertyChanged("maHS");
+					this.OnmaHSChanged();
 				}
 			}
 		}
@@ -3065,26 +3327,26 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maHS", DbType="VarChar(10) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string maHS
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_maKT", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int maKT
 		{
 			get
 			{
-				return this._maHS;
+				return this._maKT;
 			}
 			set
 			{
-				if ((this._maHS != value))
+				if ((this._maKT != value))
 				{
-					if (this._HocSinh.HasLoadedOrAssignedValue)
+					if (this._KyThi.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnmaHSChanging(value);
+					this.OnmaKTChanging(value);
 					this.SendPropertyChanging();
-					this._maHS = value;
-					this.SendPropertyChanged("maHS");
-					this.OnmaHSChanged();
+					this._maKT = value;
+					this.SendPropertyChanged("maKT");
+					this.OnmaKTChanged();
 				}
 			}
 		}
@@ -3204,7 +3466,7 @@ namespace ThiTracNghiem
 					}
 					else
 					{
-						this._maKT = default(string);
+						this._maKT = default(int);
 					}
 					this.SendPropertyChanged("KyThi");
 				}

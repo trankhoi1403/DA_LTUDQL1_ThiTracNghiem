@@ -36,17 +36,17 @@ namespace ThiTracNghiem
                      if (nguoiDung != null)
                      {
                          Form frm = null;
-                         if (nguoiDung.LoaiND == "hs")
+                         if (nguoiDung.maLND == "HS")
                          {
                              frm = new frmHocSinh();
                          }
-                         else if (nguoiDung.LoaiND == "gv")
+                         else if (nguoiDung.maLND == "GV")
                          {
                              frm = new frmGiaoVien(this, nguoiDung.GiaoVien);
                          }
-                         else if (nguoiDung.LoaiND == "ad")
+                         else if (nguoiDung.maLND == "AD")
                          {
-                             frm = new frmAdmin();
+                             frm = new frmAdmin(this, nguoiDung);
                          }
                          if (frm != null)
                          {

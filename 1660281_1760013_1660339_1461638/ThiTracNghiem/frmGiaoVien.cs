@@ -23,8 +23,8 @@ namespace ThiTracNghiem
         private List<CT_GiangDay> lkl = null;
         static BindingSource bsCauHoi = new BindingSource();
         static BindingSource bsDapAn = new BindingSource();
-
-        static BindingSource bsQldtDethi = new BindingSource();
+        static BindingSource bsDethi = new BindingSource();
+        static BindingSource bsHocSinh = new BindingSource();
 
         private void loadCbKhoiLop()
         {
@@ -39,30 +39,30 @@ namespace ThiTracNghiem
                 lblHoTenGV.Text = gv.HoTen;
                 lblNgaySinhGV.Text = $"Ngày sinh: {gv.NgaySinh.Value.ToShortDateString()}";
                 lblChuyenMon.Text = $"Chuyên môn: {qlttn.MonHocs.Where(mh => mh.maMH == gv.maMH).Single().tenMH}";
+
             }
         }
         private void loadQlchCbCauHoi()
         {
             using (var qlttn = new QLTTNDataContext())
             {
-                if (qlttn.CapDos.Count() > 0 && qlttn.CauHois.Count() > 0)
+                try
                 {
-                    try
-                    {
-                        var cauHoi = (qlttn.CauHois.Where(ch => ch.maKhoi == cbKhoiLop.SelectedValue.ToString() && ch.maMH == gv.maMH)
-                                                        .Select(ch => new { ch.maCH, ch.NoiDung, ch.CapDo.TenCD, ch.maCD }).ToList());
-                        bsCauHoi.DataSource = cauHoi;
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message);
-                        return;
-                    }
+                    var cauHoi = (qlttn.CauHois.Where(ch => ch.maKhoi == cbKhoiLop.SelectedValue.ToString() && ch.maMH == gv.maMH)
+                                                    .Select(ch => new { ch.maCH, ch.NoiDung, ch.CapDo.TenCD, ch.maCD }).ToList());
+                    bsCauHoi.DataSource = cauHoi;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return;
+                }
 
+                if (bsCauHoi.Count > 0)
+                {
                     qlchCbDsch.DataSource = bsCauHoi;
                     qlchCbDsch.DisplayMember = "NoiDung";
                     qlchCbDsch.ValueMember = "maCH";
-
 
                     qlchCbCapDo.DataSource = qlttn.CapDos.ToList();
                     qlchCbCapDo.DisplayMember = "TenCD";
@@ -70,11 +70,37 @@ namespace ThiTracNghiem
 
                     var macd = qlttn.CauHois.Where(ch => ch.maCH.ToString() == qlchCbDsch.SelectedValue.ToString()).Single().maCD;
                     qlchCbCapDo.SelectedValue = macd;
-                    //qlchCbCapDo.SelectedValue = qlchCbDsch.SelectedValue.ToString();
+
+                    if (qlchTxtCauHoi.DataBindings.Count == 0)
+                    {
+                        qlchTxtCauHoi.DataBindings.Add("Text", bsCauHoi, "NoiDung", true, DataSourceUpdateMode.Never, "Null value");
+                    }
+                    if (qlchCbCapDo.DataBindings.Count == 0)
+                    {
+                        qlchCbCapDo.DataBindings.Add("SelectedValue", bsCauHoi, "maCD", true, DataSourceUpdateMode.Never, "Null value");
+                        qlchCbCapDo.DataBindings[0].Format += (s, e) =>
+                        {
+                            if (e.DesiredType == typeof(string))
+                            {
+                                int maCapDo = int.Parse(e.Value.ToString());
+                                e.Value = (qlchCbCapDo.DataSource as List<CapDo>).Where(cd => cd.maCD == maCapDo).FirstOrDefault().TenCD;
+                            }
+                        };
+                        qlchCbCapDo.DataBindings[0].Parse += (s, e) =>
+                        {
+                            if (e.DesiredType == typeof(int))
+                            {
+                                string noiDungCapDo = e.Value.ToString();
+                                e.Value = (qlchCbCapDo.DataSource as List<CapDo>).Where(cd => cd.TenCD == noiDungCapDo).FirstOrDefault().maCD;
+                            }
+                        };
+                    }
                 }
                 else
                 {
-                    //bsCauHoi.DataSource = DBNull.Value;
+                    qlchCbCapDo.DataBindings.Clear();
+                    qlchTxtCauHoi.DataBindings.Clear();
+                    MessageBox.Show("Không có dữ liệu câu hỏi", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -99,21 +125,31 @@ namespace ThiTracNghiem
                     qlchDgvDsda.Columns["CauHoi"].Visible = false;
                     qlchDgvDsda.Columns["maDA"].Visible = false;
                     qlchDgvDsda.Columns["NoiDung"].DisplayIndex = 1;
-                    qlchDgvDsda.Columns["NoiDung"].Width = 210;
+                    qlchDgvDsda.Columns["NoiDung"].Width = 310;
                     qlchDgvDsda.Columns["NoiDung"].HeaderText = "Nội dung đáp án";
                     qlchDgvDsda.Columns["DungSai"].DisplayIndex = 2;
                     qlchDgvDsda.Columns["DungSai"].Width = 115;
                     qlchDgvDsda.Columns["DungSai"].HeaderText = "Tính chất đáp án";
+
+                    if (qlchTxtDapAn.DataBindings.Count == 0)
+                    {
+                        qlchTxtDapAn.DataBindings.Add("Text", bsDapAn, "NoiDung", true, DataSourceUpdateMode.Never, "Null value");
+                    }
+                    if (qlchCkbDungSai.DataBindings.Count == 0)
+                    {
+                        qlchCkbDungSai.DataBindings.Add("Checked", bsDapAn, "DungSai", true, DataSourceUpdateMode.Never, false);
+                    }
                 }
                 else
                 {
-                    //bsDapAn.DataSource = DBNull.Value;
+                    qlchTxtDapAn.DataBindings.Clear();
+                    qlchCkbDungSai.DataBindings.Clear();
+                    MessageBox.Show("Không có dữ liệu đáp án", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
         private void setQlch()
         {
-            qlchTxtCauHoi.DataBindings.Add("Text", bsCauHoi, "NoiDung", true, DataSourceUpdateMode.Never, "Null value");
             qlchTxtCauHoi.Validating += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(qlchTxtCauHoi.Text))
@@ -128,7 +164,6 @@ namespace ThiTracNghiem
                     errorProvider.SetError(qlchTxtCauHoi, "");
                 }
             };
-            qlchTxtDapAn.DataBindings.Add("Text", bsDapAn, "NoiDung", true, DataSourceUpdateMode.Never, "Null value");
             qlchTxtDapAn.Validating += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(qlchTxtDapAn.Text))
@@ -143,33 +178,30 @@ namespace ThiTracNghiem
                     errorProvider.SetError(qlchTxtDapAn, "");
                 }
             };
+            qlchCbDsch.SelectedIndexChanged += (s, e) =>
+             {
+                 loadQlchDgvDapAn();
 
-            qlchCbCapDo.DataBindings.Add("SelectedValue", bsCauHoi, "maCD", true, DataSourceUpdateMode.Never, "Null value");
-            qlchCbCapDo.DataBindings[0].Format += (s, e) =>
+                 if (qlchCbDsch.SelectedValue == null)
+                 {
+                     return;
+                 }
+                 using (var qlttn = new QLTTNDataContext())
+                 {
+                     qlchLbDeThiSuDungCauHoi.DataSource = qlttn.DeThis.Where(dt => dt.CT_DeThis.
+                                                                                 Where(ctdt => ctdt.maCH == int.Parse(qlchCbDsch.SelectedValue.ToString())).Count() > 0)
+                                                                      .Select(dt => new { dt.maDT, dt.TenDT }).ToList();
+                 }
+             };
+            qlchLbDeThiSuDungCauHoi.Format += (s, e) =>
             {
                 if (e.DesiredType == typeof(string))
                 {
-                    int maCapDo = int.Parse(e.Value.ToString());
-                    e.Value = (qlchCbCapDo.DataSource as List<CapDo>).Where(cd => cd.maCD == maCapDo).FirstOrDefault().TenCD;
-                }
-            };
-            qlchCbCapDo.DataBindings[0].Parse += (s, e) =>
-            {
-                if (e.DesiredType == typeof(int))
-                {
-                    string noiDungCapDo = e.Value.ToString();
-                    e.Value = (qlchCbCapDo.DataSource as List<CapDo>).Where(cd => cd.TenCD == noiDungCapDo).FirstOrDefault().maCD;
-                }
-            };
-            qlchCkbDungSai.DataBindings.Add("Checked", bsDapAn, "DungSai", true, DataSourceUpdateMode.Never, false);
-            qlchCbDsch.SelectedIndexChanged += (s, e) =>
-            {
-                using (var qlttn = new QLTTNDataContext())
-                {
-                    if (qlchCbDsch.SelectedItem != null)
-                    {
-                        bsDapAn.DataSource = qlttn.CauHois.Where(ch => ch.maCH == int.Parse(qlchCbDsch.SelectedValue.ToString())).SingleOrDefault().DapAns.ToList();
-                    }
+                    string str = e.Value.ToString();
+                    str = str.Replace("{ maDT = ", "");
+                    str = str.Replace(", TenDT = ", "-");
+                    str = str.Remove(str.Length - 1, 1);
+                    e.Value = str;
                 }
             };
         }
@@ -183,37 +215,45 @@ namespace ThiTracNghiem
                                             .ToList();
                 if (sourceDt.Count > 0)
                 {
-                    bsQldtDethi.DataSource = sourceDt;
-                    qldtDgvDeThi.DataSource = bsQldtDethi;
+                    bsDethi.DataSource = sourceDt;
+                    qldtDgvDeThi.DataSource = bsDethi;
 
                     qldtDgvDeThi.Columns["maDT"].HeaderText = "Mã";
                     qldtDgvDeThi.Columns["maDT"].Width = 40;
                     qldtDgvDeThi.Columns["TenDT"].HeaderText = "Tên đề thi";
                     qldtDgvDeThi.Columns["HoTen"].HeaderText = "Giáo viên ra đề";
                     qldtDgvDeThi.Columns["ThoiGianLamBai"].HeaderText = "Thời gian làm bài";
+                    qldtDgvDeThi.Columns["ThoiGianLamBai"].Width = 90;
                     qldtDgvDeThi.Columns["NgayTao"].HeaderText = "Ngày tạo";
 
                     if (qldtTxtTenDT.DataBindings.Count == 0)
                     {
-                        qldtTxtTenDT.DataBindings.Add("Text", bsQldtDethi, "TenDT", true, DataSourceUpdateMode.Never, "null");
-                    }
-                    if (qldtTxtThoiGianLamBai.DataBindings.Count == 0)
-                    {
-                        qldtTxtThoiGianLamBai.DataBindings.Add("Text", bsQldtDethi, "ThoiGianLamBai", true, DataSourceUpdateMode.Never, 0);
+                        qldtTxtTenDT.DataBindings.Add("Text", bsDethi, "TenDT", true, DataSourceUpdateMode.Never, "null");
                     }
                     if (qldtLblNgayTao.DataBindings.Count == 0)
                     {
-                        qldtLblNgayTao.DataBindings.Add("Text", bsQldtDethi, "NgayTao", true, DataSourceUpdateMode.Never, 0);
+                        qldtLblNgayTao.DataBindings.Add("Text", bsDethi, "NgayTao", true, DataSourceUpdateMode.Never, 0);
                     }
                     if (qldtLblNguoiTao.DataBindings.Count == 0)
                     {
-                        qldtLblNguoiTao.DataBindings.Add("Text", bsQldtDethi, "HoTen", true, DataSourceUpdateMode.Never, 0);
+                        qldtLblNguoiTao.DataBindings.Add("Text", bsDethi, "HoTen", true, DataSourceUpdateMode.Never, 0);
+                    }
+                    if (qldtTxtThoiGianLamBai.DataBindings.Count == 0)
+                    {
+                        qldtTxtThoiGianLamBai.DataBindings.Add("Text", bsDethi, "ThoiGianLamBai", true, DataSourceUpdateMode.Never, 0);
+                        qldtTxtThoiGianLamBai.DataBindings[0].Format += (s, e) =>
+                         {
+                             if (e.DesiredType == typeof(string))
+                             {
+                                 TimeSpan soPhut = TimeSpan.Parse(e.Value.ToString());
+                                 e.Value = soPhut.TotalMinutes.ToString();
+                             }
+                         };
                     }
                 }
                 else
                 {
                     qldtTxtTenDT.DataBindings.Clear();
-                    qldtTxtThoiGianLamBai.DataBindings.Clear();
                     qldtLblNguoiTao.DataBindings.Clear();
                     qldtLblNgayTao.DataBindings.Clear();
                     MessageBox.Show("Không có dữ liệu trong dgv đề thi");
@@ -222,7 +262,7 @@ namespace ThiTracNghiem
         }
         private void loadQldtDgvCauHoi()
         {
-            using (var qlttn = new QLTTNDataContext())
+            if (bsCauHoi.Count > 0)
             {
                 qldtDgvCauHoi.DataSource = bsCauHoi;
                 qldtDgvCauHoi.Columns["maCH"].Width = 40;
@@ -234,109 +274,85 @@ namespace ThiTracNghiem
                 qldtDgvCauHoi.Columns["maCD"].Visible = false;
                 qldtDgvCauHoi.AllowUserToOrderColumns = true;
             }
+            else
+            {
+                MessageBox.Show("Không có dữ liệu câu hỏi", "Thông báo tab Quản lý đề thi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
         private void setQldt()
         {
-            var col = new DataGridViewCheckBoxColumn();
-            col.Name = "Chon";
-            col.HeaderText = "Chọn câu hỏi";
-            col.Width = 80;
-            col.TrueValue = true;    // khi được check thì value sẽ là true, được ktra trong event CellValueChanged
-            col.FalseValue = false;
-            col.IndeterminateValue = col.FalseValue;
-            foreach (DataGridViewRow row in qldtDgvCauHoi.Rows)
+            qldtDgvCauHoi.Columns.Add(new DataGridViewCheckBoxColumn()
             {
-                row.Cells[0].Value = col.TrueValue;
-            }
-            qldtDgvCauHoi.Columns.Add(col);
+                Name = "Chon",
+                HeaderText = "Chọn câu hỏi",
+                Width = 80,
+                TrueValue = true,    // khi được check thì value sẽ là true, được ktra trong event CellValueChanged
+                FalseValue = false,
+                IndeterminateValue = false 
+            });
+            qldtDgvDeThi.Columns.Add(new DataGridViewButtonColumn()
+            {
+                Name = "Xoa",
+                HeaderText = "Xóa đề thi",
+                Width = 70
+            });
 
-            qldtTxtThoiGianLamBai.Validated += (s, e) =>
-             {
-                 Regex rg = new Regex("[0-2][0-3]:[0-5][0-9]:[0-5][0-9]");
-                 if (!rg.IsMatch(qldtTxtThoiGianLamBai.Text))
-                 {
-                     qldtTxtThoiGianLamBai.Text = "00:10:00";
-                 }
-             };
-            qldtTxtThoiGianLamBai.MouseUp += (s, e) =>
-            {
-                if (qldtTxtThoiGianLamBai.SelectedText.Length > 2)
-                {
-                    qldtTxtThoiGianLamBai.Select(0, qldtTxtThoiGianLamBai.Text.IndexOf(':'));
-                }
-            };
-            qldtTxtThoiGianLamBai.MouseDown += (s, e) =>
-            {
-                int i = qldtTxtThoiGianLamBai.GetCharIndexFromPosition(e.Location);
-                if (i < 3)
-                {
-                    qldtTxtThoiGianLamBai.Select(0, 2);
-                }
-                else if (i < 6)
-                {
-                    qldtTxtThoiGianLamBai.Select(3, 2);
-                }
-                else
-                {
-                    qldtTxtThoiGianLamBai.Select(6, 2);
-                }
-            };
+            qldtTxtThoiGianLamBai.Text = "10";
             qldtTxtThoiGianLamBai.KeyDown += (s, e) =>
              {
-                 if (qldtTxtThoiGianLamBai.SelectedText == qldtTxtThoiGianLamBai.Text)
+                 if (e.KeyValue >= 48 && e.KeyValue <= 57 ||
+                    e.KeyValue >= 96 && e.KeyValue <= 105 ||
+                    e.KeyCode == Keys.Back ||
+                    e.KeyCode == Keys.Delete ||
+                    e.KeyCode == Keys.Left ||
+                    e.KeyCode == Keys.Right)
                  {
-                     qldtTxtThoiGianLamBai.Select(0, 2);
+                     // nếu là số hoặc xóa hoặc dịch trái phải thì cho gõ
                  }
-                 if (e.KeyValue >= 48 && e.KeyValue <= 57 || e.KeyValue >= 96 && e.KeyValue <= 105 || e.KeyCode == Keys.Back)
+                 else if (e.KeyCode == Keys.Up)
                  {
-                     if (qldtTxtThoiGianLamBai.Text.Contains("__"))
-                     {
-                         qldtTxtThoiGianLamBai.Select(qldtTxtThoiGianLamBai.Text.IndexOf("__"), 2);
-                     }
-                     else
-                     {
-                         if (e.KeyCode == Keys.Back)
-                         {
-                             if (qldtTxtThoiGianLamBai.SelectionStart == qldtTxtThoiGianLamBai.Text.IndexOf(':') + 1 ||
-                                  qldtTxtThoiGianLamBai.SelectionStart == qldtTxtThoiGianLamBai.Text.IndexOf(':', 3) + 1)
-                             {
-                                 e.SuppressKeyPress = true;
-                                 return;
-                             }
-                         }
-                         if (qldtTxtThoiGianLamBai.TextLength == 8)
-                         {
-                             if (qldtTxtThoiGianLamBai.SelectionStart == qldtTxtThoiGianLamBai.Text.IndexOf(':') ||
-                                qldtTxtThoiGianLamBai.SelectionStart == qldtTxtThoiGianLamBai.Text.IndexOf(':', 3))
-                             {
-                                 int h, m, second;
-                                 if (!(int.TryParse(qldtTxtThoiGianLamBai.Text.Substring(0, 2), out h) && h < 24))
-                                 {
-                                     qldtTxtThoiGianLamBai.Select(0, 2);
-                                 }
-                                 else if (!(int.TryParse(qldtTxtThoiGianLamBai.Text.Substring(3, 2), out m) && m < 60))
-                                 {
-                                     qldtTxtThoiGianLamBai.Select(3, 2);
-                                 }
-                                 else if (!(int.TryParse(qldtTxtThoiGianLamBai.Text.Substring(0, 2), out second) && second < 60))
-                                 {
-                                     qldtTxtThoiGianLamBai.Select(6, 2);
-                                 }
-                                 else
-                                 {
-                                     qldtTxtThoiGianLamBai.SelectionStart++;
-                                     qldtTxtThoiGianLamBai.SelectionLength = 2;
-                                 }
-                             }
-                         }
-                     }
+                     int soPhut = int.Parse(qldtTxtThoiGianLamBai.Text);
+                     soPhut += 5;
+                     qldtTxtThoiGianLamBai.Text = soPhut.ToString();
+                 }
+                 else if (e.KeyCode == Keys.Down)
+                 {
+                     int soPhut = int.Parse(qldtTxtThoiGianLamBai.Text);
+                     soPhut -= 5;
+                     qldtTxtThoiGianLamBai.Text = soPhut.ToString();
                  }
                  else
                  {
+                     // không thì thôi
                      e.SuppressKeyPress = true;
                  }
              };
-
+            qldtTxtThoiGianLamBai.KeyUp += (s, e) =>
+             {
+                 if (string.IsNullOrWhiteSpace(qldtTxtThoiGianLamBai.Text))
+                 {
+                     qldtTxtThoiGianLamBai.Text = "5";
+                 }
+                 int soPhut = int.Parse(qldtTxtThoiGianLamBai.Text);
+                 if (soPhut < 0)
+                 {
+                     qldtTxtThoiGianLamBai.Text = "5";
+                 }
+             };
+            qldtTxtTenDT.Validating += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(qldtTxtTenDT.Text))
+                {
+                    e.Cancel = true;
+                    qldtTxtTenDT.Focus();
+                    errorProvider.SetError(qldtTxtTenDT, "Không được để trống tên đề thi");
+                }
+                else
+                {
+                    e.Cancel = false;
+                    errorProvider.SetError(qldtTxtTenDT, "");
+                }
+            };
             qldtBtnRdCauHoi.Click += (s, e) =>
               {
                   Random rd = new Random();
@@ -364,6 +380,153 @@ namespace ThiTracNghiem
                       }
                   }
               };
+            qldtDgvDeThi.CellPainting += (s, e) =>
+            {
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
+                if (e.ColumnIndex == 0)
+                {
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+                    var w = e.CellBounds.Height - 4;
+                    var h = e.CellBounds.Height - 4;
+                    var x = e.CellBounds.X + (e.CellBounds.Width - w) / 2;
+                    var y = e.CellBounds.Y + 2;
+                    e.Graphics.DrawImage(Properties.Resources.delete__1_, x, y, w, h);
+                    e.Handled = true;
+                }
+            };
+        }
+
+        private void setQlkt()
+        {
+            qlktDgvKT.Columns.Add(new DataGridViewButtonColumn()
+            {
+                Name = "Xoa",
+                Width = 80,
+                HeaderText = "Xóa kỳ thi"
+            });
+            qlktDgvKT.Rows.Add(3);
+            qlktDgvKT.CellClick += (s, e) =>
+             {
+                 if (e.ColumnIndex == 0)
+                 {
+                     qlktDgvKT.Rows.RemoveAt(e.RowIndex);
+                 }
+             };
+
+
+            qlktDgvHS.Columns.Add(new DataGridViewCheckBoxColumn()
+            {
+                Name = "Chon",
+                HeaderText = "Chọn học sinh",
+                Width = 80,
+                TrueValue = true,
+                FalseValue = false,
+                IndeterminateValue = false
+            });
+
+            qlktDgvDT.Columns.Add(new DataGridViewCheckBoxColumn()
+            {
+                Name = "Chon",
+                HeaderText = "Chọn đề thi",
+                Width = 80,
+                TrueValue = true,
+                FalseValue = false,
+                IndeterminateValue = false
+            });
+
+            qlktBtnRdHs.Click += (s, e) =>
+             {
+                 Random rd = new Random();
+                 int maxHocSinh = 10;
+
+                 if (maxHocSinh > qlktDgvHS.RowCount)
+                 {
+                     maxHocSinh = qlktDgvHS.RowCount;
+                 }
+                 foreach (DataGridViewRow row in qlktDgvHS.Rows)
+                 {
+                     var cell = row.Cells["Chon"] as DataGridViewCheckBoxCell;
+                     cell.Value = cell.FalseValue;
+                 }
+                 List<int> li = new List<int>();
+                 while (li.Count < maxHocSinh)
+                 {
+                     int hocSinhNgauNhien = rd.Next(0, qlktDgvHS.RowCount);
+
+                     if (!li.Contains(hocSinhNgauNhien))
+                     {
+                         li.Add(hocSinhNgauNhien);
+                         var cell = qlktDgvHS.Rows[hocSinhNgauNhien].Cells["Chon"] as DataGridViewCheckBoxCell;
+                         cell.Value = cell.TrueValue;
+                     }
+                 }
+             };
+
+            qlktDgvKT.CellPainting += (s, e) =>
+             {
+                 if (e.RowIndex < 0)
+                 {
+                     return;
+                 }
+                 if (e.ColumnIndex == 0)
+                 {
+                     e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+                     var w = e.CellBounds.Height - 4;
+                     var h = e.CellBounds.Height - 4;
+                     var x = e.CellBounds.X + (e.CellBounds.Width - w) / 2;
+                     var y = e.CellBounds.Y + 2;
+                     e.Graphics.DrawImage(Properties.Resources.delete__1_, x, y, w, h);
+                     e.Handled = true;
+                 }
+             };
+        }
+        private void loadQlktDgvHocSinh()
+        {
+            using (var qlttn = new QLTTNDataContext())
+            {
+                if (qlttn.HocSinhs.Count() == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu học sinh", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                bsHocSinh.DataSource = qlttn.HocSinhs.Where(hs => hs.maKhoi == cbKhoiLop.SelectedValue.ToString())
+                                                     .Select(hs => new { hs.maHS, hs.HoTen, hs.maKhoi, hs.maLop, hs.NgaySinh }).ToList();
+                qlktDgvHS.DataSource = bsHocSinh;
+                qlktDgvHS.Columns["maHS"].Width = 80;
+                qlktDgvHS.Columns["HoTen"].Width = 150;
+                qlktDgvHS.Columns["maLop"].Width = 80;
+                qlktDgvHS.Columns["NgaySinh"].Width = 80;
+                qlktDgvHS.Columns["maKhoi"].Visible = false;
+
+                qlktDgvHS.Columns["maHS"].HeaderText = "Mã học sinh";
+                qlktDgvHS.Columns["HoTen"].HeaderText = "Họ tên";
+                qlktDgvHS.Columns["maLop"].HeaderText = "Lớp học";
+                qlktDgvHS.Columns["NgaySinh"].HeaderText = "Ngày sinh";
+            }
+        }
+        private void loadQlktDgvDeThi()
+        {
+            if (bsDethi.Count > 0)
+            {
+                qlktDgvDT.DataSource = bsDethi;
+                qlktDgvDT.Columns["maDT"].HeaderText = "Mã";
+                qlktDgvDT.Columns["maDT"].Width = 40;
+                qlktDgvDT.Columns["TenDT"].HeaderText = "Tên đề thi";
+                qlktDgvDT.Columns["HoTen"].HeaderText = "Giáo viên ra đề";
+                qlktDgvDT.Columns["ThoiGianLamBai"].HeaderText = "Thời gian làm bài";
+                qlktDgvDT.Columns["NgayTao"].HeaderText = "Ngày tạo";
+            }
+            else
+            {
+                MessageBox.Show("Không có dữ liệu đề thi", "Thông báo tab Quản lý kỳ thi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        private void loadQlktDgvKyThi()
+        {
+
         }
 
         private bool DaTonTai(DeThi dethiHientai)
@@ -415,7 +578,6 @@ namespace ThiTracNghiem
             return false;
         }
 
-
         private Dictionary<TabPage, Color> TabColors = new Dictionary<TabPage, Color>();
 
         private void SetTabHeader(TabPage page, Color color)
@@ -464,7 +626,25 @@ namespace ThiTracNghiem
             this.frmlogin = frmlogin;
             InitializeComponent();
 
-            tabControl1.SelectedIndex = 1;
+            button1.Click += (s, e) =>
+             {
+                 using (var qlttn = new QLTTNDataContext())
+                 {
+                     qlttn.Connection.ChangeDatabase(qlchTxtCauHoi.Text);
+
+                     MessageBox.Show(qlttn.ToString());
+                 }
+             };
+            button2.Click += (s, e) =>
+            {
+                using (var qlttn = new QLTTNDataContext())
+                {
+                    qlttn.DeleteDatabase();
+                    qlttn.SubmitChanges();
+                }
+            };
+
+            tabControl1.SelectedIndex = 2;
             loadCbKhoiLop();
             loadQlchCbCauHoi();
             loadQlchDgvDapAn();
@@ -474,7 +654,10 @@ namespace ThiTracNghiem
             loadQldtDgvDeThi();
             loadQldtDgvCauHoi();
 
-
+            setQlkt();
+            loadQlktDgvHocSinh();
+            loadQlktDgvDeThi();
+            loadQlktDgvKyThi();
 
             this.tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
             this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
@@ -488,9 +671,21 @@ namespace ThiTracNghiem
                 frmlogin.Show();
                 this.Close();
             };
+            this.cbKhoiLop.SelectedIndexChanged += (s, e) =>
+             {
+                 loadQlchCbCauHoi();
+                 loadQlchDgvDapAn();
+                 loadQldtDgvCauHoi();
+                 loadQldtDgvDeThi();
+                 loadQlktDgvDeThi();
+                 loadQlktDgvHocSinh();
+                 loadQlktDgvKyThi();
+             };
+
+            // ======================================= QUẢN LÝ KỲ THI =============================================
+
 
             // ======================================= QUẢN LÝ ĐỀ THI =============================================
-
             qldtDgvDeThi.CellClick += (s, e) =>
                 {
                     using (var qlttn = new QLTTNDataContext())
@@ -526,8 +721,6 @@ namespace ThiTracNghiem
                         }
                     }
                 };
-
-
             qldtDgvCauHoi.CellValueChanged += (s, e) =>
               {
                   if (e.ColumnIndex == 0)
@@ -550,7 +743,6 @@ namespace ThiTracNghiem
                       qldtLblSoCHDuocChon.Text = soch + " câu";
                   }
               };
-
             qldtBtnSuaDT.Click += (s, e) =>
               {
                   int soch = int.Parse(qldtLblSoCHDuocChon.Text.Replace(" câu", ""));
@@ -574,7 +766,7 @@ namespace ThiTracNghiem
                           dethiHienTai.maMH = gv.maMH;
                           dethiHienTai.maKhoi = cbKhoiLop.SelectedValue.ToString();
                           dethiHienTai.TenDT = qldtTxtTenDT.Text;
-                          dethiHienTai.ThoiGianLamBai = TimeSpan.Parse(qldtTxtThoiGianLamBai.Text);
+                          dethiHienTai.ThoiGianLamBai = TimeSpan.FromMinutes(double.Parse(qldtTxtThoiGianLamBai.Text));
                           dethiHienTai.NgayTao = DateTime.Now;
                           qlttn.SubmitChanges();
 
@@ -607,39 +799,37 @@ namespace ThiTracNghiem
 
                   }
               };
-
-            qldtBtnXoaDT.Click += (s, e) =>
+            /// xóa đề thi
+            qldtDgvDeThi.CellClick += (s, e) =>
               {
-                  int madt;
-                  if (qldtDgvDeThi.SelectedRows.Count > 0)
+                  if (e.ColumnIndex == 0)
                   {
-                      madt = int.Parse(qldtDgvDeThi.SelectedRows[0].Cells["maDT"].Value.ToString());
-                  }
-                  else
-                  {
-                      MessageBox.Show("Mời bạn lựa chọn đề thi cần xóa", "Yêu cầu", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                      return;
-                  }
-                  using (var qlttn = new QLTTNDataContext())
-                  {
-                      qlttn.CT_DeThis.DeleteAllOnSubmit(qlttn.CT_DeThis.Where(ctdt => ctdt.maDT == madt));
-                      qlttn.SubmitChanges();
-                      qlttn.DeThis.DeleteOnSubmit(qlttn.DeThis.Where(dt => dt.maDT == madt).Single());
-                      qlttn.SubmitChanges();
-                      if (qlttn.DeThis.Count() == 0)
+                      int madt = int.Parse(qldtDgvDeThi.Rows[e.RowIndex].Cells["maDT"].Value.ToString());
+                      using (var qlttn = new QLTTNDataContext())
                       {
-                          qldtDgvDeThi.Rows.Clear();
+                          qlttn.CT_DeThis.DeleteAllOnSubmit(qlttn.CT_DeThis.Where(ctdt => ctdt.maDT == madt));
+                          qlttn.SubmitChanges();
+                          qlttn.DeThis.DeleteOnSubmit(qlttn.DeThis.Where(dt => dt.maDT == madt).Single());
+                          qlttn.SubmitChanges();
+                          if (qlttn.DeThis.Count() == 0)
+                          {
+                              qldtDgvDeThi.Rows.Clear();
+                          }
                       }
+                      loadQldtDgvDeThi();
+                      qldtDgvCauHoi.Rows.RemoveAt(e.RowIndex);
                   }
-                  loadQldtDgvDeThi();
               };
-
             qldtBtnThemDT.Click += (s, e) =>
             {
                 int soch = int.Parse(qldtLblSoCHDuocChon.Text.Replace(" câu", ""));
+                if (string.IsNullOrWhiteSpace(qldtTxtTenDT.Text))
+                {
+                    MessageBox.Show("Bạn cần phải nhập tên đề tài", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
                 if (soch == 10)
                 {
-
                     using (var qlttn = new QLTTNDataContext())
                     {
                         var dethiHientai = new DeThi()
@@ -648,7 +838,7 @@ namespace ThiTracNghiem
                             maMH = gv.maMH,
                             maKhoi = cbKhoiLop.SelectedValue.ToString(),
                             TenDT = qldtTxtTenDT.Text,
-                            ThoiGianLamBai = TimeSpan.Parse(qldtTxtThoiGianLamBai.Text),
+                            ThoiGianLamBai = TimeSpan.FromMinutes(double.Parse(qldtTxtThoiGianLamBai.Text)),
                             NgayTao = DateTime.Now
                         };
 
@@ -690,6 +880,11 @@ namespace ThiTracNghiem
             {
                 using (var qlttn = new QLTTNDataContext())
                 {
+                    if (string.IsNullOrWhiteSpace(qlchTxtCauHoi.Text))
+                    {
+                        MessageBox.Show("Bạn cần phải nhập nội dung cho câu hỏi", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                     if (qlttn.CauHois.Where(ch => ch.NoiDung.ToLower() == qlchTxtCauHoi.Text.ToLower()).Count() != 0)
                     {
                         MessageBox.Show("Câu hỏi này đã có trong danh sách. Xin mời tạo câu hỏi mới", "Trùng record", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -721,22 +916,46 @@ namespace ThiTracNghiem
             {
                 using (var qlttn = new QLTTNDataContext())
                 {
-                    if (qlttn.CauHois.Count() <= 1)
+                    if (qlchLbDeThiSuDungCauHoi.Items.Count > 0)
                     {
-                        MessageBox.Show("Không thể xóa vì cần phải có ít nhất một câu hỏi trong Database", "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        string str = $"Không thể xóa câu hỏi này vì nó đang được sử dụng trong các đề thi: ";
+                        foreach (var item in qlchLbDeThiSuDungCauHoi.Items)
+                        {
+                            str += $"{ Environment.NewLine }{item.ToString()}";
+                        }
+                        str += $"{ Environment.NewLine }Để xóa cần phải loại câu hỏi này khỏi các đề thi trên.";
+                        MessageBox.Show(str, "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         return;
                     }
+                    if (qlchCbDsch.SelectedValue == null)
+                    {
+                        return;
+                    }
+
                     var cauHoiHienTai = qlttn.CauHois
                                         .Where(ch => ch.maCH == int.Parse(qlchCbDsch.SelectedValue.ToString()))
                                         .FirstOrDefault();
                     qlttn.DapAns.DeleteAllOnSubmit(cauHoiHienTai.DapAns);
                     qlttn.CauHois.DeleteOnSubmit(cauHoiHienTai);
-                    qlttn.SubmitChanges();
+                    try
+                    {
+                        qlttn.SubmitChanges();
+                    }
+                    catch (Exception ee)
+                    {
+                        MessageBox.Show(ee.Message, "Chương trình vấp phải một lỗi nào đó", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
                 loadQlchCbCauHoi();
             };
             qlchBtnSuaCH.Click += (s, e) =>
             {
+                if (qlchCbDsch.SelectedValue == null)
+                {
+                    return;
+                }
+
                 using (var qlttn = new QLTTNDataContext())
                 {
                     var cauHoiHienTai = qlttn.CauHois
@@ -754,6 +973,15 @@ namespace ThiTracNghiem
             };
             qlchBtnThemDA.Click += (s, e) =>
             {
+                if (qlchCbDsch.SelectedValue == null)
+                {
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(qlchTxtDapAn.Text))
+                {
+                    MessageBox.Show("Bạn cần phải nhập nội dung cho đáp án", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
                 using (var qlttn = new QLTTNDataContext())
                 {
                     var cauHoiHienTai = qlttn.CauHois
@@ -785,6 +1013,10 @@ namespace ThiTracNghiem
             };
             qlchBtnXoaDA.Click += (s, e) =>
             {
+                if (qlchCbDsch.SelectedValue == null)
+                {
+                    return;
+                }
                 using (var qlttn = new QLTTNDataContext())
                 {
                     var cauHoiHienTai = qlttn.CauHois
@@ -808,6 +1040,10 @@ namespace ThiTracNghiem
             };
             qlchBtnSuaDA.Click += (s, e) =>
             {
+                if (qlchCbDsch.SelectedValue == null)
+                {
+                    return;
+                }
                 using (var qlttn = new QLTTNDataContext())
                 {
                     var cauHoiHienTai = qlttn.CauHois
@@ -896,7 +1132,6 @@ namespace ThiTracNghiem
                                                         soDapAnDuocThem++;
                                                     }
                                                 }
-
                                             }
                                             else
                                             {
