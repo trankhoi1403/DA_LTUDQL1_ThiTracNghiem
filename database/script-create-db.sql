@@ -84,7 +84,11 @@ create table LopHoc(
 
 create table NguoiDung(
 	maND varchar(10) primary key,
+<<<<<<< HEAD:database/script create db.sql
 	MatKhau varchar(100) default '123',
+=======
+	MatKhau varchar(100),
+>>>>>>> ce4baa9155c56c8ce66542e1938a0c19ba76290d:database/script-create-db.sql
 	maLND varchar(10)
 )
 
@@ -217,7 +221,10 @@ add
 	constraint fk_nd_lnd
 	foreign key (maLND)
 	references LoaiNguoiDung(maLND)
+<<<<<<< HEAD:database/script create db.sql
 go
+=======
+>>>>>>> ce4baa9155c56c8ce66542e1938a0c19ba76290d:database/script-create-db.sql
 
 /* ================================ TẠO TRIGGER =============================*/
 create function demSiSoHS (@maKhoi varchar(3), @maLop varchar(3))
@@ -286,7 +293,11 @@ insert into NguoiDung(MaND, MatKhau, maLND) values (1660281, '123', 'HS')
 insert into NguoiDung(MaND, MatKhau, maLND) values (1461638, '123', 'HS')
 insert into NguoiDung(maND, MatKhau, maLND) values (1760013, '123', 'GV')
 insert into NguoiDung(maND, MatKhau, maLND) values (1721001902, '123', 'GV')
+<<<<<<< HEAD:database/script create db.sql
 insert into NguoiDung(maND, MatKhau, maLND) values ('ad', '123', 'AD')
+=======
+insert into NguoiDung(maND, MatKhau, maLND) values (1, '123', 'AD')
+>>>>>>> ce4baa9155c56c8ce66542e1938a0c19ba76290d:database/script-create-db.sql
 go
 
 insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1660339, N'Nguyễn Thị Lý'  , '12/29/1998', 'K10', 'A1')
