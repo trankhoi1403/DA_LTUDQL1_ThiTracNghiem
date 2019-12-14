@@ -78,13 +78,13 @@ create table KhoiLop(
 create table LopHoc(
 	maKhoi varchar(3),
 	maLop varchar(3),
-	primary key (maKhoi, maLop)
+	primary key (maKhoi, maLop),
+	SiSo int default 0
 )
 
 create table NguoiDung(
 	maND varchar(10) primary key,
-	TenND varchar(100),
-	MatKhau varchar(100),
+	MatKhau varchar(100) default '123',
 	maLND varchar(10)
 )
 
@@ -112,7 +112,6 @@ create table CT_GiangDay(
 	maGV varchar(10),
 	maKhoi varchar(3),
 	maLop varchar(3),
-	SiSo int,
 	primary key (maGV, maKhoi, maLop)
 )
 go
@@ -218,9 +217,34 @@ add
 	constraint fk_nd_lnd
 	foreign key (maLND)
 	references LoaiNguoiDung(maLND)
+go
 
 /* ================================ TẠO TRIGGER =============================*/
+create function demSiSoHS (@maKhoi varchar(3), @maLop varchar(3))
+returns int
+as begin
+	return	(select count(*)
+			from HocSinh hs
+			where hs.maKhoi = @maKhoi and hs.maLop = maLop)
+end
+go
 
+create trigger trg_CapNhatSiSoLopHoc on HocSinh
+	for insert, update, delete
+as begin
+	-- update lớp học mới của học sinh đó
+	update LopHoc
+	set SiSo = dbo.demSiSoHS(i.maKhoi, i.maLop)
+	from inserted i, LopHoc lh
+	where i.maKhoi = lh.maKhoi and i.maLop = lh.maLop
+
+	-- update lớp học cũ của học sinh đó
+	update LopHoc
+	set SiSo = dbo.demSiSoHS(d.maKhoi, d.maLop)
+	from deleted d, LopHoc lh
+	where d.maKhoi = lh.maKhoi and d.maLop = lh.maLop
+end
+go
 
 /* ================================ TẠO DỮ LIỆU MẪU =============================*/
 -- thêm khối lớp K10,K11,K12, mỗi khối có 9 lớp A1 -> C3
@@ -235,9 +259,9 @@ begin
 	insert into KhoiLop(maKhoi) values (@maK)
 	while @c <= 67
 	begin
-		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + CAST(1 as char))
-		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + CAST(2 as char))
-		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + CAST(3 as char))
+		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + '1')
+		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + '2')
+		insert into LopHoc(maKhoi, maLop) values (@maK, char(@c) + '3')
 		set @c += 1
 	end
 
@@ -257,12 +281,12 @@ insert into LoaiNguoiDung(maLND, TenLND) values ('GV', N'Giáo viên')
 insert into LoaiNguoiDung(maLND, TenLND) values ('AD', N'Quản trị viên')
 go
 
-insert into NguoiDung(MaND, TenND, MatKhau, maLND) values (1660339, 'nguyenthily', '123', 'HS')
-insert into NguoiDung(MaND, TenND, MatKhau, maLND) values (1660281, 'phanxieuthien', '123', 'HS')
-insert into NguoiDung(MaND, TenND, MatKhau, maLND) values (1461638, 'trankhoi', '123', 'HS')
-insert into NguoiDung(maND, TenND, MatKhau, maLND) values (1760013, 'lethanhbbinh', '123', 'GV')
-insert into NguoiDung(maND, TenND, MatKhau, maLND) values (1721001902, 'tranlamngoc', '123', 'GV')
-insert into NguoiDung(maND, TenND, MatKhau, maLND) values (1, 'ad', '123', 'AD')
+insert into NguoiDung(MaND, MatKhau, maLND) values (1660339, '123', 'HS')
+insert into NguoiDung(MaND, MatKhau, maLND) values (1660281, '123', 'HS')
+insert into NguoiDung(MaND, MatKhau, maLND) values (1461638, '123', 'HS')
+insert into NguoiDung(maND, MatKhau, maLND) values (1760013, '123', 'GV')
+insert into NguoiDung(maND, MatKhau, maLND) values (1721001902, '123', 'GV')
+insert into NguoiDung(maND, MatKhau, maLND) values ('ad', '123', 'AD')
 go
 
 insert into HocSinh(maHS, HoTen, NgaySinh, maKhoi, maLop) values(1660339, N'Nguyễn Thị Lý'  , '12/29/1998', 'K10', 'A1')
@@ -273,9 +297,9 @@ insert into GiaoVien(maGV,HoTen, NgaySinh, MaMH) values(1760013, N'Lê Thanh Bì
 insert into GiaoVien(maGV,HoTen, NgaySinh, MaMH) values(1721001902, N'Trần Lam Ngọc', '09/21/1999', 'T')
 go
 
-insert into CT_GiangDay(maGV, maKhoi, maLop, SiSo) values(1760013, 'K10', 'A1', 30)
-insert into CT_GiangDay(maGV, maKhoi, maLop, SiSo) values(1760013, 'K12', 'A2', 30)
-insert into CT_GiangDay(maGV, maKhoi, maLop, SiSo) values(1721001902, 'K10', 'A1', 30)
+insert into CT_GiangDay(maGV, maKhoi, maLop) values(1760013, 'K10', 'A1')
+insert into CT_GiangDay(maGV, maKhoi, maLop) values(1760013, 'K12', 'A2')
+insert into CT_GiangDay(maGV, maKhoi, maLop) values(1721001902, 'K10', 'A1')
 go
 
 insert into CapDo values

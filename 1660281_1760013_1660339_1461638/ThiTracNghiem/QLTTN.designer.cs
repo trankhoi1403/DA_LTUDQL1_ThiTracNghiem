@@ -859,8 +859,6 @@ namespace ThiTracNghiem
 		
 		private string _maLop;
 		
-		private System.Nullable<int> _SiSo;
-		
 		private EntityRef<GiaoVien> _GiaoVien;
 		
 		private EntityRef<LopHoc> _LopHoc;
@@ -875,8 +873,6 @@ namespace ThiTracNghiem
     partial void OnmaKhoiChanged();
     partial void OnmaLopChanging(string value);
     partial void OnmaLopChanged();
-    partial void OnSiSoChanging(System.Nullable<int> value);
-    partial void OnSiSoChanged();
     #endregion
 		
 		public CT_GiangDay()
@@ -954,26 +950,6 @@ namespace ThiTracNghiem
 					this._maLop = value;
 					this.SendPropertyChanged("maLop");
 					this.OnmaLopChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SiSo", DbType="Int")]
-		public System.Nullable<int> SiSo
-		{
-			get
-			{
-				return this._SiSo;
-			}
-			set
-			{
-				if ((this._SiSo != value))
-				{
-					this.OnSiSoChanging(value);
-					this.SendPropertyChanging();
-					this._SiSo = value;
-					this.SendPropertyChanged("SiSo");
-					this.OnSiSoChanged();
 				}
 			}
 		}
@@ -2610,6 +2586,8 @@ namespace ThiTracNghiem
 		
 		private string _TenLND;
 		
+		private EntitySet<NguoiDung> _NguoiDungs;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2622,6 +2600,7 @@ namespace ThiTracNghiem
 		
 		public LoaiNguoiDung()
 		{
+			this._NguoiDungs = new EntitySet<NguoiDung>(new Action<NguoiDung>(this.attach_NguoiDungs), new Action<NguoiDung>(this.detach_NguoiDungs));
 			OnCreated();
 		}
 		
@@ -2665,6 +2644,19 @@ namespace ThiTracNghiem
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="LoaiNguoiDung_NguoiDung", Storage="_NguoiDungs", ThisKey="maLND", OtherKey="maLND")]
+		public EntitySet<NguoiDung> NguoiDungs
+		{
+			get
+			{
+				return this._NguoiDungs;
+			}
+			set
+			{
+				this._NguoiDungs.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -2684,6 +2676,18 @@ namespace ThiTracNghiem
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_NguoiDungs(NguoiDung entity)
+		{
+			this.SendPropertyChanging();
+			entity.LoaiNguoiDung = this;
+		}
+		
+		private void detach_NguoiDungs(NguoiDung entity)
+		{
+			this.SendPropertyChanging();
+			entity.LoaiNguoiDung = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.LopHoc")]
@@ -2695,6 +2699,8 @@ namespace ThiTracNghiem
 		private string _maKhoi;
 		
 		private string _maLop;
+		
+		private System.Nullable<int> _SiSo;
 		
 		private EntitySet<CT_GiangDay> _CT_GiangDays;
 		
@@ -2710,6 +2716,8 @@ namespace ThiTracNghiem
     partial void OnmaKhoiChanged();
     partial void OnmaLopChanging(string value);
     partial void OnmaLopChanged();
+    partial void OnSiSoChanging(System.Nullable<int> value);
+    partial void OnSiSoChanged();
     #endregion
 		
 		public LopHoc()
@@ -2760,6 +2768,26 @@ namespace ThiTracNghiem
 					this._maLop = value;
 					this.SendPropertyChanged("maLop");
 					this.OnmaLopChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SiSo", DbType="Int")]
+		public System.Nullable<int> SiSo
+		{
+			get
+			{
+				return this._SiSo;
+			}
+			set
+			{
+				if ((this._SiSo != value))
+				{
+					this.OnSiSoChanging(value);
+					this.SendPropertyChanging();
+					this._SiSo = value;
+					this.SendPropertyChanged("SiSo");
+					this.OnSiSoChanged();
 				}
 			}
 		}
@@ -3047,8 +3075,6 @@ namespace ThiTracNghiem
 		
 		private string _maND;
 		
-		private string _TenND;
-		
 		private string _MatKhau;
 		
 		private string _maLND;
@@ -3057,14 +3083,14 @@ namespace ThiTracNghiem
 		
 		private EntityRef<HocSinh> _HocSinh;
 		
+		private EntityRef<LoaiNguoiDung> _LoaiNguoiDung;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
     partial void OnmaNDChanging(string value);
     partial void OnmaNDChanged();
-    partial void OnTenNDChanging(string value);
-    partial void OnTenNDChanged();
     partial void OnMatKhauChanging(string value);
     partial void OnMatKhauChanged();
     partial void OnmaLNDChanging(string value);
@@ -3075,6 +3101,7 @@ namespace ThiTracNghiem
 		{
 			this._GiaoVien = default(EntityRef<GiaoVien>);
 			this._HocSinh = default(EntityRef<HocSinh>);
+			this._LoaiNguoiDung = default(EntityRef<LoaiNguoiDung>);
 			OnCreated();
 		}
 		
@@ -3098,27 +3125,7 @@ namespace ThiTracNghiem
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TenND", DbType="VarChar(100)")]
-		public string TenND
-		{
-			get
-			{
-				return this._TenND;
-			}
-			set
-			{
-				if ((this._TenND != value))
-				{
-					this.OnTenNDChanging(value);
-					this.SendPropertyChanging();
-					this._TenND = value;
-					this.SendPropertyChanged("TenND");
-					this.OnTenNDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MatKhau", DbType="VarChar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MatKhau", DbType="VarChar(100)", IsDbGenerated = true, AutoSync = AutoSync.OnInsert)]
 		public string MatKhau
 		{
 			get
@@ -3149,6 +3156,10 @@ namespace ThiTracNghiem
 			{
 				if ((this._maLND != value))
 				{
+					if (this._LoaiNguoiDung.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnmaLNDChanging(value);
 					this.SendPropertyChanging();
 					this._maLND = value;
@@ -3212,6 +3223,40 @@ namespace ThiTracNghiem
 						value.NguoiDung = this;
 					}
 					this.SendPropertyChanged("HocSinh");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="LoaiNguoiDung_NguoiDung", Storage="_LoaiNguoiDung", ThisKey="maLND", OtherKey="maLND", IsForeignKey=true)]
+		public LoaiNguoiDung LoaiNguoiDung
+		{
+			get
+			{
+				return this._LoaiNguoiDung.Entity;
+			}
+			set
+			{
+				LoaiNguoiDung previousValue = this._LoaiNguoiDung.Entity;
+				if (((previousValue != value) 
+							|| (this._LoaiNguoiDung.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._LoaiNguoiDung.Entity = null;
+						previousValue.NguoiDungs.Remove(this);
+					}
+					this._LoaiNguoiDung.Entity = value;
+					if ((value != null))
+					{
+						value.NguoiDungs.Add(this);
+						this._maLND = value.maLND;
+					}
+					else
+					{
+						this._maLND = default(string);
+					}
+					this.SendPropertyChanged("LoaiNguoiDung");
 				}
 			}
 		}

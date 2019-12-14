@@ -20,22 +20,25 @@ namespace ThiTracNghiem
     {
         private frmLogin frmlogin = null;
         private GiaoVien gv = null;
-        private List<CT_GiangDay> lkl = null;
-        static BindingSource bsCauHoi = new BindingSource();
-        static BindingSource bsDapAn = new BindingSource();
-        static BindingSource bsDethi = new BindingSource();
-        static BindingSource bsHocSinh = new BindingSource();
+        private List<string> lkl = null;
+        private BindingSource bsCauHoi = new BindingSource();
+        private BindingSource bsDapAn = new BindingSource();
+        private BindingSource bsDethi = new BindingSource();
+        private BindingSource bsHocSinh = new BindingSource();
 
         private void loadCbKhoiLop()
         {
             using (var qlttn = new QLTTNDataContext())
             {
-                lkl = gv.CT_GiangDays.ToList();
+                lkl = gv.CT_GiangDays.Select(ctgd => ctgd.maKhoi).Distinct().ToList();
                 cbKhoiLop.DataSource = lkl;
-                cbKhoiLop.DisplayMember = "maKhoi";
-                cbKhoiLop.ValueMember = "maKhoi";
-                cbKhoiLop.SelectedItem = cbKhoiLop.Items[0];
-                string txt = cbKhoiLop.SelectedValue.ToString();
+                //cbKhoiLop.DisplayMember = "maKhoi";
+                //cbKhoiLop.ValueMember = "maKhoi";
+                if (cbKhoiLop.Items.Count != 0)
+                {
+                    cbKhoiLop.SelectedItem = cbKhoiLop.Items[0];
+                    string txt = cbKhoiLop.SelectedValue.ToString();
+                }
                 lblHoTenGV.Text = gv.HoTen;
                 lblNgaySinhGV.Text = $"Ngày sinh: {gv.NgaySinh.Value.ToShortDateString()}";
                 lblChuyenMon.Text = $"Chuyên môn: {qlttn.MonHocs.Where(mh => mh.maMH == gv.maMH).Single().tenMH}";
@@ -210,12 +213,20 @@ namespace ThiTracNghiem
         {
             using (var qlttn = new QLTTNDataContext())
             {
-                var sourceDt = qlttn.DeThis.Where(dt => dt.maMH == gv.maMH && dt.maKhoi == cbKhoiLop.SelectedValue.ToString())
-                                            .Select(dt => new { dt.maDT, dt.TenDT, dt.GiaoVien.HoTen, dt.ThoiGianLamBai, dt.NgayTao })
-                                            .ToList();
-                if (sourceDt.Count > 0)
+                try
                 {
+                    var sourceDt = qlttn.DeThis.Where(dt => dt.maMH == gv.maMH && dt.maKhoi == cbKhoiLop.SelectedValue.ToString())
+                                                .Select(dt => new { dt.maDT, dt.TenDT, dt.GiaoVien.HoTen, dt.ThoiGianLamBai, dt.NgayTao })
+                                                .ToList();
                     bsDethi.DataSource = sourceDt;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return;
+                }
+                if (bsDethi.Count > 0)
+                {
                     qldtDgvDeThi.DataSource = bsDethi;
 
                     qldtDgvDeThi.Columns["maDT"].HeaderText = "Mã";
@@ -256,6 +267,7 @@ namespace ThiTracNghiem
                     qldtTxtTenDT.DataBindings.Clear();
                     qldtLblNguoiTao.DataBindings.Clear();
                     qldtLblNgayTao.DataBindings.Clear();
+                    qldtTxtThoiGianLamBai.DataBindings.Clear();
                     MessageBox.Show("Không có dữ liệu trong dgv đề thi");
                 }
             }
@@ -288,7 +300,7 @@ namespace ThiTracNghiem
                 Width = 80,
                 TrueValue = true,    // khi được check thì value sẽ là true, được ktra trong event CellValueChanged
                 FalseValue = false,
-                IndeterminateValue = false 
+                IndeterminateValue = false
             });
             qldtDgvDeThi.Columns.Add(new DataGridViewButtonColumn()
             {
@@ -492,19 +504,31 @@ namespace ThiTracNghiem
                     MessageBox.Show("Không có dữ liệu học sinh", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-                bsHocSinh.DataSource = qlttn.HocSinhs.Where(hs => hs.maKhoi == cbKhoiLop.SelectedValue.ToString())
-                                                     .Select(hs => new { hs.maHS, hs.HoTen, hs.maKhoi, hs.maLop, hs.NgaySinh }).ToList();
-                qlktDgvHS.DataSource = bsHocSinh;
-                qlktDgvHS.Columns["maHS"].Width = 80;
-                qlktDgvHS.Columns["HoTen"].Width = 150;
-                qlktDgvHS.Columns["maLop"].Width = 80;
-                qlktDgvHS.Columns["NgaySinh"].Width = 80;
-                qlktDgvHS.Columns["maKhoi"].Visible = false;
 
-                qlktDgvHS.Columns["maHS"].HeaderText = "Mã học sinh";
-                qlktDgvHS.Columns["HoTen"].HeaderText = "Họ tên";
-                qlktDgvHS.Columns["maLop"].HeaderText = "Lớp học";
-                qlktDgvHS.Columns["NgaySinh"].HeaderText = "Ngày sinh";
+                try
+                {
+                    bsHocSinh.DataSource = qlttn.HocSinhs.Where(hs => hs.maKhoi == cbKhoiLop.SelectedValue.ToString())
+                                                         .Select(hs => new { hs.maHS, hs.HoTen, hs.maKhoi, hs.maLop, hs.NgaySinh }).ToList();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return;
+                }
+                if (bsHocSinh.Count > 0)
+                {
+                    qlktDgvHS.DataSource = bsHocSinh;
+                    qlktDgvHS.Columns["maHS"].Width = 80;
+                    qlktDgvHS.Columns["HoTen"].Width = 150;
+                    qlktDgvHS.Columns["maLop"].Width = 80;
+                    qlktDgvHS.Columns["NgaySinh"].Width = 80;
+                    qlktDgvHS.Columns["maKhoi"].Visible = false;
+
+                    qlktDgvHS.Columns["maHS"].HeaderText = "Mã học sinh";
+                    qlktDgvHS.Columns["HoTen"].HeaderText = "Họ tên";
+                    qlktDgvHS.Columns["maLop"].HeaderText = "Lớp học";
+                    qlktDgvHS.Columns["NgaySinh"].HeaderText = "Ngày sinh";
+                }
             }
         }
         private void loadQlktDgvDeThi()

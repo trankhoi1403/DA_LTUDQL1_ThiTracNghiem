@@ -17,6 +17,8 @@ namespace ThiTracNghiem
 {
     public partial class frmHocSinh : Form
     {
+        frmLogin frmlogin = null;
+        HocSinh hs = null;
         static BindingSource bsCauHoi = new BindingSource();
         static BindingSource bsDapAn = new BindingSource();
         void set()
@@ -128,17 +130,17 @@ namespace ThiTracNghiem
                 }
             }
         }
-        public frmHocSinh()
+        public frmHocSinh(frmLogin frmlogin, HocSinh hs)
         {
+            this.frmlogin = frmlogin;
+            this.hs = hs;
             InitializeComponent();
 
             // thanhbinh
             timer1.Start();
             timer1.Interval = 1000;
             int counter = 3600;
-
             TimeSpan t = TimeSpan.FromSeconds(counter);
-          
             timer1.Tick += (s, e) =>
             {
 
@@ -158,6 +160,10 @@ namespace ThiTracNghiem
             };
 
             // koichen
+            this.FormClosing += (s, e) =>
+              {
+                  frmlogin.Show();
+              };
             loadCBCauHoi();
             loadDGVDapAn();
             set();

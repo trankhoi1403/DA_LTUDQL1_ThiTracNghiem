@@ -13,6 +13,9 @@ namespace ThiTracNghiem
 {
     public partial class frmLogin : Form
     {
+        static Form frm = null;
+        static NguoiDung nguoiDung = null;
+        
         public frmLogin()
         {
             InitializeComponent();
@@ -26,19 +29,21 @@ namespace ThiTracNghiem
             //     Image img = ThiTracNghiem.Properties.Resources.hinh_nen_form_login;
             //     e.Graphics.DrawImage(img, groupBox1.Bounds);
             // };
+            txtMatKhau.GotFocus += (s, e) =>
+             {
 
+             };
             txtMatKhau.TextChanged += (s, e) =>
              {
                  using (var qlttn = new QLTTNDataContext())
                  {
-                     NguoiDung nguoiDung = null;
-                     nguoiDung = qlttn.NguoiDungs.Where(nd => nd.TenND == txtTenDangNhap.Text && nd.MatKhau == txtMatKhau.Text).SingleOrDefault();
+                     nguoiDung = qlttn.NguoiDungs.Where(nd => nd.maND == txtTenDangNhap.Text && nd.MatKhau == txtMatKhau.Text).FirstOrDefault();
                      if (nguoiDung != null)
                      {
-                         Form frm = null;
+                         frm = null;
                          if (nguoiDung.maLND == "HS")
                          {
-                             frm = new frmHocSinh();
+                             frm = new frmHocSinh(this, nguoiDung.HocSinh);
                          }
                          else if (nguoiDung.maLND == "GV")
                          {

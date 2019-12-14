@@ -160,10 +160,10 @@
             // button2
             // 
             this.button2.BackColor = System.Drawing.Color.HotPink;
-            this.button2.Location = new System.Drawing.Point(160, 10);
+            this.button2.Location = new System.Drawing.Point(632, 40);
             this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(84, 49);
+            this.button2.Size = new System.Drawing.Size(32, 23);
             this.button2.TabIndex = 12;
             this.button2.Text = "xóa db";
             this.button2.UseVisualStyleBackColor = false;
@@ -171,10 +171,10 @@
             // button1
             // 
             this.button1.BackColor = System.Drawing.Color.HotPink;
-            this.button1.Location = new System.Drawing.Point(400, 14);
+            this.button1.Location = new System.Drawing.Point(632, 14);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(84, 49);
+            this.button1.Size = new System.Drawing.Size(32, 22);
             this.button1.TabIndex = 11;
             this.button1.Text = "tạo db";
             this.button1.UseVisualStyleBackColor = false;
